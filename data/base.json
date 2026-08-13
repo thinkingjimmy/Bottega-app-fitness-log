@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "name": "健身日志",
+  "columns": [
+    { "id": "date", "name": "日期", "type": "date" },
+    { "id": "exercise", "name": "动作", "type": "text" },
+    { "id": "sets", "name": "组数", "type": "number" },
+    { "id": "weight", "name": "重量", "type": "number" }
+  ],
+  "views": [
+    {
+      "id": "log",
+      "name": "训练记录",
+      "order": 0,
+      "config": {
+        "type": "table",
+        "sorts": [{ "columnId": "date", "direction": "desc" }],
+        "columnAggregations": { "sets": "sum", "weight": "max" }
+      }
+    },
+    {
+      "id": "progress",
+      "name": "进展",
+      "order": 1,
+      "config": {
+        "type": "chart",
+        "charts": [
+          {
+            "id": "max-weight",
+            "name": "各动作最大重量（kg）",
+            "chartType": "bar",
+            "dimensionColumnId": "exercise",
+            "valueColumnIds": ["weight"],
+            "aggregation": "max",
+            "colSpan": 2,
+            "rowSpan": 1
+          },
+          {
+            "id": "volume-by-day",
+            "name": "每日总组数",
+            "chartType": "line",
+            "dimensionColumnId": "date",
+            "dateBucket": "day",
+            "valueColumnIds": ["sets"],
+            "aggregation": "sum",
+            "colSpan": 2,
+            "rowSpan": 1
+          }
+        ]
+      }
+    }
+  ],
+  "rows": [
+    {
+      "id": "sample-1",
+      "values": {
+        "date": "2026-03-02",
+        "exercise": "示例：卧推",
+        "sets": 4,
+        "weight": 60
+      }
+    },
+    {
+      "id": "sample-2",
+      "values": {
+        "date": "2026-03-02",
+        "exercise": "示例：飞鸟",
+        "sets": 3,
+        "weight": 12
+      }
+    },
+    {
+      "id": "sample-3",
+      "values": {
+        "date": "2026-03-04",
+        "exercise": "示例：深蹲",
+        "sets": 5,
+        "weight": 80
+      }
+    },
+    {
+      "id": "sample-4",
+      "values": {
+        "date": "2026-03-04",
+        "exercise": "示例：腿举",
+        "sets": 4,
+        "weight": 140
+      }
+    },
+    {
+      "id": "sample-5",
+      "values": {
+        "date": "2026-03-06",
+        "exercise": "示例：硬拉",
+        "sets": 4,
+        "weight": 100
+      }
+    },
+    {
+      "id": "sample-6",
+      "values": {
+        "date": "2026-03-06",
+        "exercise": "示例：引体向上",
+        "sets": 4,
+        "weight": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "base",
+  "packageSchemaVersion": 1,
+  "name": "健身日志",
+  "description": "把训练计划和当天完成情况记成结构化日志，随时看每个动作的重量进展。",
+  "icon": "🏋️",
+  "requirements": null
+}
