@@ -1,9 +1,20 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "健身日志",
   "columns": [
     { "id": "date", "name": "日期", "type": "date" },
     { "id": "exercise", "name": "动作", "type": "text" },
+    { "id": "exercise_id", "name": "动作目录 ID", "type": "text" },
+    {
+      "id": "status",
+      "name": "状态",
+      "type": "select",
+      "options": [
+        { "id": "planned", "label": "计划" },
+        { "id": "completed", "label": "已完成" },
+        { "id": "unknown", "label": "待确认" }
+      ]
+    },
     { "id": "sets", "name": "组数", "type": "number" },
     { "id": "weight", "name": "重量", "type": "number" }
   ],
@@ -24,6 +35,12 @@
       "order": 1,
       "config": {
         "type": "chart",
+        "filter": {
+          "kind": "condition",
+          "columnId": "status",
+          "operator": "eq",
+          "value": "completed"
+        },
         "charts": [
           {
             "id": "max-weight",
@@ -56,6 +73,8 @@
       "values": {
         "date": "2026-03-02",
         "exercise": "示例：卧推",
+        "exercise_id": "0025",
+        "status": "completed",
         "sets": 4,
         "weight": 60
       }
@@ -64,7 +83,9 @@
       "id": "sample-2",
       "values": {
         "date": "2026-03-02",
-        "exercise": "示例：飞鸟",
+        "exercise": "示例：单臂绳索下斜飞鸟",
+        "exercise_id": "1262",
+        "status": "completed",
         "sets": 3,
         "weight": 12
       }
@@ -74,6 +95,8 @@
       "values": {
         "date": "2026-03-04",
         "exercise": "示例：深蹲",
+        "exercise_id": "0043",
+        "status": "completed",
         "sets": 5,
         "weight": 80
       }
@@ -82,7 +105,9 @@
       "id": "sample-4",
       "values": {
         "date": "2026-03-04",
-        "exercise": "示例：腿举",
+        "exercise": "示例：高脚杯深蹲",
+        "exercise_id": "1760",
+        "status": "completed",
         "sets": 4,
         "weight": 140
       }
@@ -92,6 +117,8 @@
       "values": {
         "date": "2026-03-06",
         "exercise": "示例：硬拉",
+        "exercise_id": "0032",
+        "status": "completed",
         "sets": 4,
         "weight": 100
       }
@@ -101,6 +128,8 @@
       "values": {
         "date": "2026-03-06",
         "exercise": "示例：引体向上",
+        "exercise_id": "3293",
+        "status": "completed",
         "sets": 4,
         "weight": 0
       }

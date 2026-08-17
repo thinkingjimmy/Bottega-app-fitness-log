@@ -1,0 +1,93 @@
+<!doctype html>
+<!--
+  [INPUT]: 依赖同目录外置 CSS/JS、原创 inline 人体 SVG 与生成器产出的本地 JSON
+  [OUTPUT]: 提供离线 Fitness Log 动作目录、训练诊断、时间范围和正背面肌肉热力图语义骨架
+  [POS]: gui 固定唯一入口；只承载可访问 DOM，不含 inline script、外链、媒体或 Base 写入口
+  [PROTOCOL]: 变更时更新此头部，然后检查 README.md
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fitness Log · 训练覆盖</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script defer src="./scripts/base-api.js"></script>
+    <script defer src="./scripts/catalog.js"></script>
+    <script defer src="./scripts/muscle-stats.js"></script>
+    <script defer src="./scripts/main.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">FITNESS LOG</p>
+        <h1>训练覆盖，而不是训练建议</h1>
+        <p class="subtitle">只统计已完成训练的组数。通过 Use chat 或“数据”录入与更正。</p>
+      </div>
+      <div class="revision" aria-live="polite"><span>Base revision</span><strong id="revision">—</strong></div>
+    </header>
+
+    <main>
+      <section class="heat-panel" aria-labelledby="heat-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">MUSCLE MAP</p><h2 id="heat-title">肌肉热力图</h2></div>
+          <label>时间范围
+            <select id="range"><option value="7">最近 7 天</option><option value="30" selected>最近 30 天</option><option value="90">最近 90 天</option><option value="all">全部</option></select>
+          </label>
+        </div>
+        <div id="status" class="status" role="status">正在读取训练数据…</div>
+        <div class="body-maps">
+          <figure><figcaption>正面</figcaption>
+            <svg class="body" viewBox="0 0 220 480" role="img" aria-label="正面人体肌肉训练覆盖图">
+              <path class="silhouette" d="M110 12c24 0 37 19 33 43-3 18-12 30-21 37l6 24 45 20 24 85-21 7-29-72-13 9 10 108-13 190h-30l-11-159-11 159H49L36 273l10-108-13-9-29 72-21-7 24-85 45-20 6-24c-9-7-18-19-21-37-4-24 9-43 33-43z"/>
+              <g class="zones">
+                <ellipse data-muscle="neck" tabindex="0" role="button" aria-label="颈部" cx="110" cy="92" rx="18" ry="14"/>
+                <path data-muscle="chest" tabindex="0" role="button" aria-label="胸部" d="M70 126q40-20 80 0v44q-40 20-80 0z"/>
+                <path data-muscle="anterior_lateral_deltoids" tabindex="0" role="button" aria-label="三角肌前束与中束" d="M48 127q-22 6-27 31l22 16 27-39zm124 0q22 6 27 31l-22 16-27-39z"/>
+                <path data-muscle="biceps" tabindex="0" role="button" aria-label="肱二头肌" d="M34 174l24 5-8 58-25-4zm152 0-24 5 8 58 25-4z"/>
+                <path data-muscle="forearms" tabindex="0" role="button" aria-label="前臂" d="M25 239l25 4-18 76-23-5zm170 0-25 4 18 76 23-5z"/>
+                <path data-muscle="abs" tabindex="0" role="button" aria-label="腹直肌" d="M88 177h44v103H88z"/>
+                <path data-muscle="obliques" tabindex="0" role="button" aria-label="腹斜肌" d="M66 176h20v101H66zm68 0h20v101h-20z"/>
+                <path data-muscle="adductors_hip_flexors" tabindex="0" role="button" aria-label="内收肌与髋屈肌" d="M74 278h32l-14 75-27-5zm40 0h32l9 70-27 5z"/>
+                <path data-muscle="quadriceps" tabindex="0" role="button" aria-label="股四头肌" d="M62 305l30 52-8 100H55zm96 0-30 52 8 100h29z"/>
+                <path data-muscle="calves" tabindex="0" role="button" aria-label="小腿" d="M56 397h28l-5 64H50zm108 0h-28l5 64h29z"/>
+              </g>
+            </svg>
+          </figure>
+          <figure><figcaption>背面</figcaption>
+            <svg class="body" viewBox="0 0 220 480" role="img" aria-label="背面人体肌肉训练覆盖图">
+              <path class="silhouette" d="M110 12c24 0 37 19 33 43-3 18-12 30-21 37l6 24 45 20 24 85-21 7-29-72-13 9 10 108-13 190h-30l-11-159-11 159H49L36 273l10-108-13-9-29 72-21-7 24-85 45-20 6-24c-9-7-18-19-21-37-4-24 9-43 33-43z"/>
+              <g class="zones">
+                <path data-muscle="upper_back_traps" tabindex="0" role="button" aria-label="斜方肌与上背" d="M69 119l41-25 41 25-18 66H87z"/>
+                <path data-muscle="posterior_deltoids" tabindex="0" role="button" aria-label="三角肌后束" d="M50 125q-25 7-29 32l24 15 25-37zm120 0q25 7 29 32l-24 15-25-37z"/>
+                <path data-muscle="lats" tabindex="0" role="button" aria-label="背阔肌" d="M67 161l39 30-20 82-27-30zm86 0-39 30 20 82 27-30z"/>
+                <path data-muscle="triceps" tabindex="0" role="button" aria-label="肱三头肌" d="M34 174l24 5-8 58-25-4zm152 0-24 5 8 58 25-4z"/>
+                <path data-muscle="lower_back" tabindex="0" role="button" aria-label="下背" d="M87 206h46l9 66-32 25-32-25z"/>
+                <path data-muscle="glutes" tabindex="0" role="button" aria-label="臀肌" d="M65 275q45-26 45 24-6 49-47 35zm90 0q-45-26-45 24 6 49 47 35z"/>
+                <path data-muscle="hamstrings" tabindex="0" role="button" aria-label="腘绳肌" d="M61 331h39l-16 126H55zm98 0h-39l16 126h29z"/>
+              </g>
+            </svg>
+          </figure>
+        </div>
+        <div class="legend"><span>0</span><i></i><i></i><i></i><i></i><i></i><span>高</span></div>
+        <section id="muscle-detail" class="detail" aria-live="polite"><h3>选择一个肌肉区域</h3><p>可用鼠标点击，或用 Tab 聚焦后按 Enter。</p></section>
+        <details><summary id="diagnostic-summary">未纳入统计：0 条</summary><ul id="diagnostics"></ul></details>
+      </section>
+
+      <section class="catalog-panel" aria-labelledby="catalog-title">
+        <div class="section-heading"><div><p class="eyebrow">72 EXERCISES · OFFLINE</p><h2 id="catalog-title">动作目录</h2></div><button id="clear" type="button">清除筛选</button></div>
+        <div class="filters">
+          <label class="search">搜索<input id="query" type="search" placeholder="名称、别名、肌肉或器械"></label>
+          <label>身体部位<select id="body-filter"><option value="">全部</option></select></label>
+          <label>肌肉区域<select id="muscle-filter"><option value="">全部</option></select></label>
+          <label>器械<select id="equipment-filter"><option value="">全部</option></select></label>
+        </div>
+        <p id="result-count" class="result-count"></p>
+        <div id="catalog" class="catalog" aria-live="polite"></div>
+        <button id="more" class="more" type="button">显示更多</button>
+      </section>
+    </main>
+
+    <dialog id="exercise-dialog"><button class="dialog-close" type="button" aria-label="关闭">×</button><div id="exercise-detail"></div></dialog>
+    <footer>动作元数据与说明来自 hasaneyldrm/exercises-dataset（固定 commit 7455efae…，MIT）。未使用 Gym visual 图片或 GIF。本页面不构成医疗或训练建议。</footer>
+  </body>
+</html>

@@ -2,7 +2,7 @@
   "kind": "base",
   "packageSchemaVersion": 1,
   "name": "健身日志",
-  "description": "把训练计划和当天完成情况记成结构化日志，随时看每个动作的重量进展。",
+  "description": "区分计划与完成训练，浏览离线动作目录，并用只读人体热力图查看已完成组数覆盖。",
   "icon": "🏋️",
   "requirements": null
 }

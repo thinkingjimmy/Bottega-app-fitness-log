@@ -1,0 +1,53 @@
+[
+  {
+    "id": "chest"
+  },
+  {
+    "id": "upper_back_traps"
+  },
+  {
+    "id": "lats"
+  },
+  {
+    "id": "lower_back"
+  },
+  {
+    "id": "anterior_lateral_deltoids"
+  },
+  {
+    "id": "posterior_deltoids"
+  },
+  {
+    "id": "biceps"
+  },
+  {
+    "id": "triceps"
+  },
+  {
+    "id": "forearms"
+  },
+  {
+    "id": "abs"
+  },
+  {
+    "id": "obliques"
+  },
+  {
+    "id": "glutes"
+  },
+  {
+    "id": "quadriceps"
+  },
+  {
+    "id": "hamstrings"
+  },
+  {
+    "id": "calves"
+  },
+  {
+    "id": "adductors_hip_flexors"
+  },
+  {
+    "id": "neck"
+  }
+]
