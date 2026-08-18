@@ -1,53 +1,70 @@
 [
   {
-    "id": "chest"
+    "id": "chest",
+    "label": "胸部"
   },
   {
-    "id": "upper_back_traps"
+    "id": "upper_back_traps",
+    "label": "斜方肌与上背"
   },
   {
-    "id": "lats"
+    "id": "lats",
+    "label": "背阔肌"
   },
   {
-    "id": "lower_back"
+    "id": "lower_back",
+    "label": "下背"
   },
   {
-    "id": "anterior_lateral_deltoids"
+    "id": "anterior_lateral_deltoids",
+    "label": "三角肌前束与中束"
   },
   {
-    "id": "posterior_deltoids"
+    "id": "posterior_deltoids",
+    "label": "三角肌后束"
   },
   {
-    "id": "biceps"
+    "id": "biceps",
+    "label": "肱二头肌"
   },
   {
-    "id": "triceps"
+    "id": "triceps",
+    "label": "肱三头肌"
   },
   {
-    "id": "forearms"
+    "id": "forearms",
+    "label": "前臂"
   },
   {
-    "id": "abs"
+    "id": "abs",
+    "label": "腹直肌"
   },
   {
-    "id": "obliques"
+    "id": "obliques",
+    "label": "腹斜肌"
   },
   {
-    "id": "glutes"
+    "id": "glutes",
+    "label": "臀肌"
   },
   {
-    "id": "quadriceps"
+    "id": "quadriceps",
+    "label": "股四头肌"
   },
   {
-    "id": "hamstrings"
+    "id": "hamstrings",
+    "label": "腘绳肌"
   },
   {
-    "id": "calves"
+    "id": "calves",
+    "label": "小腿"
   },
   {
-    "id": "adductors_hip_flexors"
+    "id": "adductors_hip_flexors",
+    "label": "内收肌与髋屈肌"
   },
   {
-    "id": "neck"
+    "id": "neck",
+    "label": "颈部"
   }
 ]

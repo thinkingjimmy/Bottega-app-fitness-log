@@ -1,8 +1,8 @@
 <!doctype html>
 <!--
-  [INPUT]: 依赖同目录外置 CSS/JS、原创 inline 人体 SVG 与生成器产出的本地 JSON
+  [INPUT]: 依赖同目录外置 CSS/JS 与生成器产出的本地 JSON；人体 SVG 由 main.js 按 data/body-map.json 组装
   [OUTPUT]: 提供离线 Fitness Log 动作目录、训练诊断、时间范围和正背面肌肉热力图语义骨架
-  [POS]: gui 固定唯一入口；只承载可访问 DOM，不含 inline script、外链、媒体或 Base 写入口
+  [POS]: gui 固定唯一入口；只承载可访问 DOM 与两个空 SVG 取景框，不含 inline script、外链、媒体或 Base 写入口
   [PROTOCOL]: 变更时更新此头部，然后检查 README.md
 -->
 <html lang="zh-CN">
@@ -37,35 +37,10 @@
         <div id="status" class="status" role="status">正在读取训练数据…</div>
         <div class="body-maps">
           <figure><figcaption>正面</figcaption>
-            <svg class="body" viewBox="0 0 220 480" role="img" aria-label="正面人体肌肉训练覆盖图">
-              <path class="silhouette" d="M110 12c24 0 37 19 33 43-3 18-12 30-21 37l6 24 45 20 24 85-21 7-29-72-13 9 10 108-13 190h-30l-11-159-11 159H49L36 273l10-108-13-9-29 72-21-7 24-85 45-20 6-24c-9-7-18-19-21-37-4-24 9-43 33-43z"/>
-              <g class="zones">
-                <ellipse data-muscle="neck" tabindex="0" role="button" aria-label="颈部" cx="110" cy="92" rx="18" ry="14"/>
-                <path data-muscle="chest" tabindex="0" role="button" aria-label="胸部" d="M70 126q40-20 80 0v44q-40 20-80 0z"/>
-                <path data-muscle="anterior_lateral_deltoids" tabindex="0" role="button" aria-label="三角肌前束与中束" d="M48 127q-22 6-27 31l22 16 27-39zm124 0q22 6 27 31l-22 16-27-39z"/>
-                <path data-muscle="biceps" tabindex="0" role="button" aria-label="肱二头肌" d="M34 174l24 5-8 58-25-4zm152 0-24 5 8 58 25-4z"/>
-                <path data-muscle="forearms" tabindex="0" role="button" aria-label="前臂" d="M25 239l25 4-18 76-23-5zm170 0-25 4 18 76 23-5z"/>
-                <path data-muscle="abs" tabindex="0" role="button" aria-label="腹直肌" d="M88 177h44v103H88z"/>
-                <path data-muscle="obliques" tabindex="0" role="button" aria-label="腹斜肌" d="M66 176h20v101H66zm68 0h20v101h-20z"/>
-                <path data-muscle="adductors_hip_flexors" tabindex="0" role="button" aria-label="内收肌与髋屈肌" d="M74 278h32l-14 75-27-5zm40 0h32l9 70-27 5z"/>
-                <path data-muscle="quadriceps" tabindex="0" role="button" aria-label="股四头肌" d="M62 305l30 52-8 100H55zm96 0-30 52 8 100h29z"/>
-                <path data-muscle="calves" tabindex="0" role="button" aria-label="小腿" d="M56 397h28l-5 64H50zm108 0h-28l5 64h29z"/>
-              </g>
-            </svg>
+            <svg class="body" data-view="front" role="img" aria-label="正面人体肌肉训练覆盖图"></svg>
           </figure>
           <figure><figcaption>背面</figcaption>
-            <svg class="body" viewBox="0 0 220 480" role="img" aria-label="背面人体肌肉训练覆盖图">
-              <path class="silhouette" d="M110 12c24 0 37 19 33 43-3 18-12 30-21 37l6 24 45 20 24 85-21 7-29-72-13 9 10 108-13 190h-30l-11-159-11 159H49L36 273l10-108-13-9-29 72-21-7 24-85 45-20 6-24c-9-7-18-19-21-37-4-24 9-43 33-43z"/>
-              <g class="zones">
-                <path data-muscle="upper_back_traps" tabindex="0" role="button" aria-label="斜方肌与上背" d="M69 119l41-25 41 25-18 66H87z"/>
-                <path data-muscle="posterior_deltoids" tabindex="0" role="button" aria-label="三角肌后束" d="M50 125q-25 7-29 32l24 15 25-37zm120 0q25 7 29 32l-24 15-25-37z"/>
-                <path data-muscle="lats" tabindex="0" role="button" aria-label="背阔肌" d="M67 161l39 30-20 82-27-30zm86 0-39 30 20 82 27-30z"/>
-                <path data-muscle="triceps" tabindex="0" role="button" aria-label="肱三头肌" d="M34 174l24 5-8 58-25-4zm152 0-24 5 8 58 25-4z"/>
-                <path data-muscle="lower_back" tabindex="0" role="button" aria-label="下背" d="M87 206h46l9 66-32 25-32-25z"/>
-                <path data-muscle="glutes" tabindex="0" role="button" aria-label="臀肌" d="M65 275q45-26 45 24-6 49-47 35zm90 0q-45-26-45 24 6 49 47 35z"/>
-                <path data-muscle="hamstrings" tabindex="0" role="button" aria-label="腘绳肌" d="M61 331h39l-16 126H55zm98 0h-39l16 126h29z"/>
-              </g>
-            </svg>
+            <svg class="body" data-view="back" role="img" aria-label="背面人体肌肉训练覆盖图"></svg>
           </figure>
         </div>
         <div class="legend"><span>0</span><i></i><i></i><i></i><i></i><i></i><span>高</span></div>
@@ -88,6 +63,6 @@
     </main>
 
     <dialog id="exercise-dialog"><button class="dialog-close" type="button" aria-label="关闭">×</button><div id="exercise-detail"></div></dialog>
-    <footer>动作元数据与说明来自 hasaneyldrm/exercises-dataset（固定 commit 7455efae…，MIT）。未使用 Gym visual 图片或 GIF。本页面不构成医疗或训练建议。</footer>
+    <footer>动作元数据与说明来自 hasaneyldrm/exercises-dataset（固定 commit 7455efae…，MIT）；人体肌肉矢量图来自 HichamELBSI/react-native-body-highlighter（固定 commit 15df9e2d…，MIT）。未使用上游图片、GIF 或截图。本页面不构成医疗或训练建议。</footer>
   </body>
 </html>

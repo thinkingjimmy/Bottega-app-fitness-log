@@ -10,11 +10,13 @@ Existing instances are upgraded by the generic `migrations/base.json` contract: 
 
 The heatmap scores sets, not weight: target zone ×1.0, muscle group ×0.65, and each secondary zone ×0.35. Duplicate zones within one exercise take the highest weight. Display intensity is `1 - exp(-score / 12)`. This is a visualization scale, not training or medical advice. Excluded rows remain visible as diagnostics.
 
-## Offline exercise data
+## Offline exercise and anatomy data
 
 The catalog is generated from [`hasaneyldrm/exercises-dataset`](https://github.com/hasaneyldrm/exercises-dataset) at commit `7455efae41b330c265e7cd4b78dfa848e7ce5ebd`. Metadata and instructions are distributed under its MIT license, included in `gui/data/exercises-dataset.LICENSE.txt`.
 
-No upstream images, GIFs, or other Gym visual media are included. The body map is original project SVG. The GUI makes no runtime network requests and reads Base only through the token-bound, read-only `/_api/base` gateway.
+The front/back muscle map is generated from [`HichamELBSI/react-native-body-highlighter`](https://github.com/HichamELBSI/react-native-body-highlighter) at commit `15df9e2dbc621450001960bed5a30e6a75357faa`, distributed under its MIT license, included in `gui/data/body-highlighter.LICENSE.txt`. Only the SVG path data is vendored — no React Native runtime, screenshots, or other upstream assets.
+
+No upstream images, GIFs, or other Gym visual media are included. The GUI makes no runtime network requests and reads Base only through the token-bound, read-only `/_api/base` gateway.
 
 ## Use it
 
@@ -32,9 +34,9 @@ None. The App uses AI Chat's built-in Base tools and read-only GUI gateway.
 - `app.json`: Base App manifest.
 - `data/base.json`: v2 six-column seed and completed-only progress views.
 - `migrations/base.json`: generic, idempotent live Base upgrade descriptor.
-- `gui/`: fixed offline GUI Surface entry, scripts, original SVG, and pinned catalog data.
+- `gui/`: fixed offline GUI Surface entry, scripts, and pinned catalog + anatomy data.
 - `.agents/skills/workout-entry/SKILL.md`: planned/completed recording protocol.
 
 ## License
 
-App code and original SVG: MIT. Upstream dataset attribution and media exception are preserved in the bundled license.
+App code: MIT. Both upstream projects are MIT; their full license texts, pinned commits, and the media exception are preserved in `gui/data/*.LICENSE.txt` and `gui/data/*source*.json`.

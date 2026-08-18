@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 FitnessBaseApi/FitnessCatalog/FitnessMuscleStats 全局纯模块、index DOM 与本地 data JSON
- * [OUTPUT]: 编排原子 Base 快照、训练诊断、SVG 热度/下钻、含次要肌肉可访问文本的动作组合筛选/24 项分批渲染与结构化错误状态
+ * [INPUT]: 依赖 FitnessBaseApi/FitnessCatalog/FitnessMuscleStats 全局纯模块、index DOM 与本地 data JSON（含 body-map.json 几何与 muscle-regions.json 标签）
+ * [OUTPUT]: 编排原子 Base 快照、训练诊断、解剖级人体 SVG 组装与热度/下钻、含次要肌肉可访问文本的动作组合筛选/24 项分批渲染与结构化错误状态
  * [POS]: gui/scripts 的浏览器组合根；只读、零外网，5xx 保留上次成功快照并显式标旧
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
@@ -9,9 +9,10 @@
 
 (function startFitnessGui(global) {
   "use strict";
+  const SVG_NS = "http://www.w3.org/2000/svg";
   const $ = (selector) => document.querySelector(selector);
-  const state = { exercises: [], regions: [], snapshot: null, analysis: null, selectedMuscle: "", visible: 24 };
-  const labels = {
+  const state = { exercises: [], regions: [], labels: new Map(), snapshot: null, analysis: null, selectedMuscle: "", visible: 24 };
+  const EXCLUSIONS = {
     sample: "示例行", planned: "计划尚未完成", "status-unknown": "状态未知或非法",
     "exercise-unknown": "动作 id 缺失或未知", "sets-invalid": "组数非法",
     "date-invalid": "日期非法", "outside-range": "不在所选时间范围",
@@ -24,9 +25,13 @@
     try {
       const token = global.FitnessBaseApi.consumeToken(global.location, global.history);
       if (!token) throw new global.FitnessBaseApi.BaseApiError(401, "缺少 Base token，请刷新应用");
-      const [exercises, regions] = await Promise.all([loadJson("./data/exercises.json"), loadJson("./data/muscle-regions.json")]);
+      const [exercises, regions, bodyMap] = await Promise.all([
+        loadJson("./data/exercises.json"), loadJson("./data/muscle-regions.json"), loadJson("./data/body-map.json"),
+      ]);
       state.exercises = exercises;
       state.regions = regions;
+      state.labels = new Map(regions.map((region) => [region.id, region.label]));
+      renderBodyMaps(bodyMap);
       populateFilters();
       renderCatalog();
       const client = new global.FitnessBaseApi.Client({ token });
@@ -68,6 +73,46 @@
     if (state.selectedMuscle) renderMuscleDetail(state.selectedMuscle);
   }
 
+  /* ---------------------------------------------------------------- body map
+     几何来自生成器固化的 body-map.json：outline 是人形轮廓，figure 是头发/手足
+     等纯装饰件（永不接收热度），zone 是 17 个 canonical 区域的可聚焦分组。 */
+  function renderBodyMaps(map) {
+    document.querySelectorAll("[data-view]").forEach((svg) => {
+      const view = map.views[svg.dataset.view];
+      svg.setAttribute("viewBox", map.viewBox[svg.dataset.view]);
+      svg.append(shape("path", { class: "outline", d: view.outline }));
+      svg.append(group("figure", view.figure.map((d) => shape("path", { d }))));
+      view.zones.forEach((zone) => svg.append(zoneGroup(zone)));
+    });
+  }
+
+  function zoneGroup(zone) {
+    const node = group("zone", zone.paths.map((d) => shape("path", { d })));
+    node.dataset.muscle = zone.id;
+    node.setAttribute("tabindex", "0");
+    node.setAttribute("role", "button");
+    node.setAttribute("aria-label", state.labels.get(zone.id) || zone.id);
+    node.addEventListener("click", () => renderMuscleDetail(zone.id));
+    node.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      renderMuscleDetail(zone.id);
+    });
+    return node;
+  }
+
+  function group(className, children) {
+    const node = shape("g", { class: className });
+    children.forEach((child) => node.append(child));
+    return node;
+  }
+
+  function shape(tag, attributes) {
+    const node = document.createElementNS(SVG_NS, tag);
+    Object.entries(attributes).forEach(([name, value]) => node.setAttribute(name, value));
+    return node;
+  }
+
   function renderHeat() {
     document.querySelectorAll("[data-muscle]").forEach((element) => {
       const muscle = element.dataset.muscle;
@@ -75,26 +120,27 @@
       const intensity = global.FitnessMuscleStats.intensity(score);
       const level = intensity === 0 ? 0 : Math.min(4, Math.max(1, Math.ceil(intensity * 4)));
       element.dataset.level = String(level);
-      element.setAttribute("aria-label", `${element.getAttribute("aria-label").split("，")[0]}，得分 ${score.toFixed(1)}`);
+      element.setAttribute("aria-label", `${state.labels.get(muscle) || muscle}，得分 ${score.toFixed(1)}`);
       element.classList.toggle("selected", muscle === state.selectedMuscle);
     });
   }
 
   function renderMuscleDetail(muscle) {
     state.selectedMuscle = muscle;
+    if (!state.analysis) return;
     renderHeat();
     const score = state.analysis.scores[muscle] || 0;
     const items = state.analysis.contributions[muscle] || [];
     const totalSets = items.reduce((sum, item) => sum + item.sets, 0);
     const uniqueRows = new Set(items.map((item) => item.rowId)).size;
-    $("#muscle-detail").innerHTML = `<h3>${escapeHtml(muscle)}</h3><p>得分 <strong>${score.toFixed(1)}</strong> · 完成组数 ${totalSets} · 训练记录 ${uniqueRows}</p>${items.length ? `<ol>${items.slice(0, 8).map((item) => `<li>${escapeHtml(item.exercise)}：${item.sets} 组，贡献 ${item.points.toFixed(1)}</li>`).join("")}</ol>` : "<p>所选范围内暂无合规 completed 记录。</p>"}`;
+    $("#muscle-detail").innerHTML = `<h3>${escapeHtml(state.labels.get(muscle) || muscle)}</h3><p>得分 <strong>${score.toFixed(1)}</strong> · 完成组数 ${totalSets} · 训练记录 ${uniqueRows}</p>${items.length ? `<ol>${items.slice(0, 8).map((item) => `<li>${escapeHtml(item.exercise)}：${item.sets} 组，贡献 ${item.points.toFixed(1)}</li>`).join("")}</ol>` : "<p>所选范围内暂无合规 completed 记录。</p>"}`;
   }
 
   function renderDiagnostics() {
     const entries = Object.entries(state.analysis.diagnostics);
     $("#diagnostic-summary").textContent = `未纳入统计：${state.analysis.excludedRows} 条`;
     $("#diagnostics").innerHTML = entries.length
-      ? entries.map(([reason, count]) => `<li>${escapeHtml(labels[reason] || reason)}：${count}</li>`).join("")
+      ? entries.map(([reason, count]) => `<li>${escapeHtml(EXCLUSIONS[reason] || reason)}：${count}</li>`).join("")
       : "<li>所有记录均符合当前统计口径。</li>";
   }
 
@@ -109,26 +155,20 @@
       renderCatalog();
     });
     $("#more").addEventListener("click", () => { state.visible += 24; renderCatalog(); });
-    document.querySelectorAll("[data-muscle]").forEach((element) => {
-      const select = () => renderMuscleDetail(element.dataset.muscle);
-      element.addEventListener("click", select);
-      element.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); select(); }
-      });
-    });
     $(".dialog-close").addEventListener("click", () => $("#exercise-dialog").close());
   }
 
   function populateFilters() {
-    addOptions("#body-filter", unique(state.exercises.map((item) => item.body_part)));
-    addOptions("#muscle-filter", state.regions.map((item) => item.id));
-    addOptions("#equipment-filter", unique(state.exercises.map((item) => item.equipment)));
+    addOptions("#body-filter", unique(state.exercises.map((item) => item.body_part)).map(self));
+    addOptions("#muscle-filter", state.regions.map((region) => [region.label, region.id]));
+    addOptions("#equipment-filter", unique(state.exercises.map((item) => item.equipment)).map(self));
   }
 
-  function addOptions(selector, values) {
+  function addOptions(selector, entries) {
     const select = $(selector);
-    values.forEach((value) => select.add(new Option(value, value)));
+    entries.forEach(([label, value]) => select.add(new Option(label, value)));
   }
+  function self(value) { return [value, value]; }
 
   function renderCatalog() {
     if (!state.exercises.length) return;
