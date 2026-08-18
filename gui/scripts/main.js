@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 FitnessBaseApi/FitnessCatalog/FitnessMuscleStats 全局纯模块、index DOM 与本地 data JSON
- * [OUTPUT]: 编排原子 Base 快照、训练诊断、SVG 热度/下钻、动作组合筛选/24 项分批渲染与结构化错误状态
+ * [OUTPUT]: 编排原子 Base 快照、训练诊断、SVG 热度/下钻、含次要肌肉可访问文本的动作组合筛选/24 项分批渲染与结构化错误状态
  * [POS]: gui/scripts 的浏览器组合根；只读、零外网，5xx 保留上次成功快照并显式标旧
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
@@ -146,7 +146,10 @@
   }
 
   function cardHtml(item) {
-    return `<button class="card" type="button" data-exercise-id="${item.id}"><strong>${escapeHtml(item.aliases[0] || item.name)}</strong><span>${escapeHtml(item.name)}</span><span>${escapeHtml(item.target)} · ${escapeHtml(item.equipment)}</span></button>`;
+    const secondary = item.secondary_muscles.length
+      ? item.secondary_muscles.join("、")
+      : "无";
+    return `<button class="card" type="button" data-exercise-id="${item.id}"><strong>${escapeHtml(item.aliases[0] || item.name)}</strong><span>${escapeHtml(item.name)}</span><span>主要肌肉：${escapeHtml(item.target)} · 器械：${escapeHtml(item.equipment)}</span><span>次要肌肉：${escapeHtml(secondary)}</span></button>`;
   }
 
   function openExercise(id) {
