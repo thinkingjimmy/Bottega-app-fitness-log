@@ -10,4 +10,5 @@ Base 列（id → 含义）：`date` 日期、`exercise` 动作名、`exercise_i
 
 计划拆解、动作命名归一、改记录与进展查询的完整规则在
 `.agents/skills/workout-entry/SKILL.md`——用户提到训练、动作、组数、重量、
-计划、完成确认或 PR 时先读它，再动 Base。GUI 只读，不提供写入按钮。
+计划、完成确认或 PR 时先读它，再动 Base。GUI 可在用户明确授权后批量新增
+`planned` 训练计划；修改、完成和删除仍走 Use chat 或“数据”。

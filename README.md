@@ -23,7 +23,7 @@ The catalog, body map, and animations are all bundled. The page makes no network
 
 ## How to use it
 
-1. Open **Use chat** and describe a plan, or a workout you have finished.
+1. Use **Create training plan** in the App GUI for append-only planned rows, or open **Use chat** for completed workouts and corrections.
 2. Confirm a plan as done and the App patches that row instead of inserting a new one.
 3. Open **应用** for the catalog and heatmap; open **数据** to check or correct any row.
 4. If the App cannot match what you said to a catalog exercise, it leaves the id blank rather than guessing.
@@ -42,7 +42,7 @@ App code is MIT. Every upstream licence text, pinned commit, and content hash sh
 
 ## Requirements
 
-None. The App uses AI Chat's built-in Base tools and its read-only GUI gateway.
+The GUI requests append-only Base row insertion. It can add planned rows only; it cannot edit or delete existing rows, import data, or upload attachments.
 
 ---
 

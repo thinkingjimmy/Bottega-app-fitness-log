@@ -4,13 +4,14 @@
 
 成员清单
 
-- index.html: 固定 GUI Surface 入口；动作目录、控件与两个空人体 SVG 取景框的可访问骨架，文案只写 `data-i18n` 键位不写字面量。
+- index.html: 固定 GUI Surface 入口；动作目录、人体 SVG 取景框、动作详情与多动作训练计划 dialog 的可访问骨架。
 - styles.css: 响应式、深浅主题、reduced-motion、焦点与 OKLCH 单调热度视觉系统；轮廓/装饰件/热区三层配色与演示动图版式。
-- scripts/: 语言协商、Base 读取、动作检索、统计与 DOM 编排纯模块，详见 scripts/README.md。
+- plan.css: 训练计划 dialog 的 44px 触控、busy、窄窗与可访问反馈增量样式；通用视觉仍归 styles.css。
+- scripts/: 语言协商、Base 读写、动作检索、统计、plan builder/submission 与 DOM 编排，详见 scripts/README.md。
 - data/: 固定上游提交生成的动作目录、男女解剖几何、五语言分区标签与供应链取证，详见 data/README.md。
 - media/: 72 张 180×180 演示动图，详见 media/README.md。
 
-依赖方向：`index.html → scripts/main.js → i18n.js + base-api.js + catalog.js + muscle-stats.js + data/*.json + media/*.gif`；任何模块都不得访问外网、preload、Node 或 Base 写端点。
+依赖方向：`index.html → scripts/main.js → i18n + base-api + catalog + muscle-stats + plan-builder + plan-submission + local data/media`；任何模块都不得访问外网、preload 或 Node，Base mutation 只经同源 append-only API。
 
 三条硬约束：
 

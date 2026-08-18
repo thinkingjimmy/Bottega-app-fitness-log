@@ -36,8 +36,9 @@ base-ops skill，本文只定义健身日志自己的约定。
 
 1. 先 `base_describe` 读到 `revision` 与列 schema。
 2. 先判断语义：计划写 `planned`；用户说已练完/刚完成才写 `completed`。不能从过去式之外的模糊表达猜完成。
-3. 行 id 用 `w-{YYYYMMDD}-{当日序号}`（如 `w-20260306-3`）。同日追加时先
-   `base_query`（filter `date = 该日`）数出已有条数再编号，天然幂等。
+3. 本次提交只生成一次完整 UUID；同批重试必须复用。行 id 用
+   `w-{YYYYMMDD}-{UUID去横线}-{批内1起序号}`。禁止按当日行数编号：并发会撞号，
+   删除旧行后还会复用身份。
 4. 一次口述含多个动作（「今天练腿：深蹲 5×80，腿举 4×140」）就一次
    `base_insert_rows` 批量写入，一个动作一行。
 5. 用户确认某个既有计划已完成时，先按 date/exercise 查询并 patch 对应 `planned` row 为
@@ -48,7 +49,8 @@ base-ops skill，本文只定义健身日志自己的约定。
 
 - 改已有记录用 `base_patch_rows`（字段级 LWW）；先 `base_query` 定位行 id，不凭记忆猜。
 - 「今天深蹲加到 85」这类追加重量，是 patch 当天那一行，不是新插一行。
-- 进展问题一律 `base_query`，只纳入 `status=completed` 且排除 `sample-*`；不要凭上下文回答。
+- 进展问题一律 `base_query`，只纳入 `status=completed`；row id 不是业务类型，
+  seed 默认 `unknown` 所以自然不统计。不要凭上下文回答。
 - legacy row 缺 status 时按 `unknown` 处理。用户确认后可 patch；不得批量伪造成 completed。
 - 完整导出用 `base_export_csv`，返回的是 artifact 元数据而不是内联 CSV 正文。
 
@@ -58,8 +60,8 @@ base-ops skill，本文只定义健身日志自己的约定。
 
 ```
 base_insert_rows rows=[
-  { id: "w-20260309-1", values: { date: "2026-03-09", exercise: "杠铃卧推", exercise_id: "0025", status: "completed", sets: 4, weight: 60 } },
-  { id: "w-20260309-2", values: { date: "2026-03-09", exercise: "单臂绳索下斜飞鸟", exercise_id: "1262", status: "completed", sets: 3, weight: 12 } }
+  { id: "w-20260309-a4f29c13d8e14a86b2f75bdad98f0c11-1", values: { date: "2026-03-09", exercise: "杠铃卧推", exercise_id: "0025", status: "completed", sets: 4, weight: 60 } },
+  { id: "w-20260309-a4f29c13d8e14a86b2f75bdad98f0c11-2", values: { date: "2026-03-09", exercise: "单臂绳索下斜飞鸟", exercise_id: "1262", status: "completed", sets: 3, weight: 12 } }
 ]
 ```
 
@@ -69,5 +71,6 @@ base_insert_rows rows=[
 
 - 不删列、不改已有列类型——这些能力没有对 Agent 开放。
 - 不给出医疗或伤病建议；用户提到疼痛时如实记录并建议咨询专业人士。
-- 示例行（`sample-*`）永远不参与 PR、训练量或肌肉图，即使其 status 为 completed。
+- seed 行默认 `unknown`，因此不参与 PR、训练量或肌肉图；用户若明确把它改成
+  合法 `completed`，它就成为普通已确认事实，不按 row id 前缀加隐藏特判。
 - 不把热力图当训练处方；它只是已完成组数的可视化，不承诺效果。

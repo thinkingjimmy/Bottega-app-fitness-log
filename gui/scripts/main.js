@@ -1,11 +1,11 @@
 /**
- * [INPUT]: 依赖 FitnessI18n/FitnessBaseApi/FitnessCatalog/FitnessMuscleStats 全局纯模块、index DOM 与本地 data JSON（body-map.json 几何、muscle-regions.json 多语言标签、exercises.json 目录与 Gym visual 署名）
- * [OUTPUT]: 编排语言协商与文案填充、男女正背面人体 SVG 组装与热度/下钻、原子 Base 快照、含演示动图与版权露出的动作详情、组合筛选与 24 项分批渲染
- * [POS]: gui/scripts 的浏览器组合根；只读、零外网，5xx 保留上次成功快照并显式标旧
+ * [INPUT]: 依赖 FitnessI18n/BaseApi/Catalog/MuscleStats/PlanBuilder/PlanSubmission、index DOM 与本地 JSON/GIF
+ * [OUTPUT]: 编排语言、人体热力图/目录、原子 Base 快照，以及可访问的多动作 planned batch dialog 与 unknown-outcome 恢复
+ * [POS]: gui/scripts 的浏览器组合根；零外网，Base 只经 BaseApi，fitness 语义只经 PlanBuilder
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
 
-/* global Option, document, fetch, navigator */
+/* global Option, crypto, document, fetch, navigator */
 
 (function startFitnessGui(global) {
   "use strict";
@@ -14,6 +14,7 @@
     exercises: [], regions: [], labels: new Map(), bodyMap: null,
     gender: "male", snapshot: null, analysis: null, selectedMuscle: "", visible: 24,
     locale: "en", t: (key) => key,
+    client: null, planController: null, planAttempt: null, planTrigger: null,
   };
 
   document.addEventListener("DOMContentLoaded", () => void boot());
@@ -35,7 +36,26 @@
       populateFilters();
       renderCatalog();
       const client = new global.FitnessBaseApi.Client({ token: fragment.token });
+      state.client = client;
+      state.planController = new global.FitnessPlanSubmission.Controller({
+        api: client,
+        onState: renderPlanState,
+        validateRetry: (attempt, snapshot) => {
+          global.FitnessPlanBuilder.assertNoPlannedDuplicate(
+            snapshot.rows,
+            attempt.frozen.date,
+            attempt.frozen.rows.map((row) => row.values.exercise_id)
+          );
+        },
+      });
       publish(await client.refresh());
+      const restored = state.planController.restore();
+      if (restored) {
+        state.planAttempt = restored;
+        state.planTrigger = $("#create-plan");
+        renderFrozenPlan(restored);
+        void state.planController.reconcileAttempt(restored);
+      }
       client.startPolling(publish, (error) => showError(error, true));
       global.addEventListener("beforeunload", () => client.stopPolling(), { once: true });
     } catch (error) {
@@ -131,6 +151,12 @@
     $("#status").textContent = issues.length
       ? state.t("status.schema", { issues: issues.map((issue) => `${issue.id}(${issue.reason})`).join(", ") })
       : state.t("status.ok", { n: snapshot.rows.length });
+    const planIssues = global.FitnessPlanBuilder.validatePlanSchema(snapshot.meta);
+    const canInsert = snapshot.meta.capabilities && snapshot.meta.capabilities.rowInsert;
+    $("#create-plan").disabled = !canInsert || planIssues.length > 0;
+    $("#create-plan").title = !canInsert
+      ? state.t("plan.disabled.readonly")
+      : planIssues.length ? state.t("plan.disabled.schema") : "";
     calculate();
   }
 
@@ -192,6 +218,169 @@
     });
     $("#more").addEventListener("click", () => { state.visible += 24; renderCatalog(); });
     $(".dialog-close").addEventListener("click", () => $("#exercise-dialog").close());
+    $("#create-plan").addEventListener("click", openPlan);
+    $("#plan-add").addEventListener("click", () => addPlanRow());
+    $("#plan-close").addEventListener("click", closePlan);
+    $("#plan-cancel").addEventListener("click", closePlan);
+    $("#plan-dialog").addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closePlan();
+    });
+    $("#plan-form").addEventListener("submit", submitPlan);
+    $("#plan-form").addEventListener("input", () => {
+      if (state.planAttempt && ["draft", "editable-error", "retry-ready"].includes(state.planAttempt.state)) {
+        state.planAttempt = null;
+        state.planController.clear();
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------- plan builder */
+  function openPlan(event) {
+    if (!state.snapshot || !state.client || $("#create-plan").disabled) return;
+    state.planTrigger = event.currentTarget;
+    state.planAttempt = null;
+    state.planController.clear();
+    $("#plan-date").value = global.FitnessPlanBuilder.localDate(new Date());
+    $("#plan-list").replaceChildren();
+    addPlanRow();
+    $("#plan-error").textContent = "";
+    $("#plan-form").setAttribute("aria-busy", "false");
+    setPlanLocked(false);
+    $("#plan-dialog").showModal();
+    $("#plan-date").focus();
+  }
+
+  function addPlanRow(selectedId, values) {
+    const row = $("#plan-row-template").content.firstElementChild.cloneNode(true);
+    const select = row.querySelector("select");
+    const search = row.querySelector(".plan-exercise-search");
+    const populate = () => {
+      const query = search.value.trim().toLocaleLowerCase();
+      const current = select.value || selectedId || "";
+      select.replaceChildren(new Option(state.t("plan.choose"), ""));
+      state.exercises
+        .filter((exercise) =>
+          !query || `${exercise.name} ${(exercise.aliases || []).join(" ")}`.toLocaleLowerCase().includes(query) || exercise.id === current
+        )
+        .forEach((exercise) => select.add(new Option(displayName(exercise), exercise.id)));
+      select.value = current;
+    };
+    search.addEventListener("input", populate);
+    populate();
+    row.querySelectorAll("[data-i18n]").forEach((node) => {
+      node.textContent = state.t(node.getAttribute("data-i18n"));
+    });
+    row.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+      node.setAttribute("placeholder", state.t(node.getAttribute("data-i18n-placeholder")));
+    });
+    if (values) {
+      row.querySelector(".plan-sets").value = String(values.sets);
+      row.querySelector(".plan-weight").value = String(values.weight);
+    }
+    row.querySelector(".plan-remove").addEventListener("click", () => {
+      if ($("#plan-list").children.length > 1) row.remove();
+    });
+    $("#plan-list").append(row);
+  }
+
+  function renderFrozenPlan(attempt) {
+    $("#plan-date").value = attempt.frozen.date;
+    $("#plan-list").replaceChildren();
+    attempt.frozen.rows.forEach((row) =>
+      addPlanRow(row.values.exercise_id, row.values)
+    );
+    $("#plan-error").textContent = "";
+    if (!$("#plan-dialog").open) $("#plan-dialog").showModal();
+    $("#plan-date").focus();
+  }
+
+  function closePlan() {
+    if (state.planAttempt && ["submitting", "reconciling", "committed-refreshing"].includes(state.planAttempt.state)) {
+      $("#plan-error").textContent = state.t("plan.busyClose");
+      state.planController.save(state.planAttempt);
+      return;
+    }
+    $("#plan-dialog").close();
+    state.planTrigger && state.planTrigger.focus();
+  }
+
+  async function submitPlan(event) {
+    event.preventDefault();
+    if (!state.snapshot || !state.planController) return;
+    try {
+      if (!state.planAttempt) {
+        const items = [...document.querySelectorAll(".plan-row")].map((row) => ({
+          exerciseId: row.querySelector("select").value,
+          sets: Number(row.querySelector(".plan-sets").value),
+          weight: Number(row.querySelector(".plan-weight").value),
+        }));
+        const frozen = global.FitnessPlanBuilder.freezePlan({
+          meta: state.snapshot.meta,
+          rows: state.snapshot.rows,
+          exercises: state.exercises,
+          date: $("#plan-date").value,
+          items,
+          randomUUID: () => crypto.randomUUID(),
+        });
+        state.planAttempt = global.FitnessPlanSubmission.createAttempt(
+          frozen,
+          state.snapshot.meta.revision
+        );
+      }
+      await state.planController.submit(state.planAttempt);
+    } catch (error) {
+      $("#plan-error").textContent = planError(error);
+      const field = error && error.field;
+      if (field === "date") $("#plan-date").focus();
+      const item = /^items\.(\d+)\.(.+)$/.exec(field || "");
+      if (item) {
+        const row = $("#plan-list").children[Number(item[1])];
+        row && row.querySelector(item[2] === "exerciseId" ? "select" : `.plan-${item[2]}`)?.focus();
+      }
+    }
+  }
+
+  function renderPlanState(attempt) {
+    state.planAttempt = attempt;
+    const busy = ["submitting", "retry-wait", "reconciling", "committed-refreshing"].includes(attempt.state);
+    const locked = busy || ["hard-conflict", "committed-refresh-failed"].includes(attempt.state);
+    $("#plan-form").setAttribute("aria-busy", String(busy));
+    setPlanLocked(locked);
+    $("#plan-save").textContent = state.t(`plan.state.${attempt.state}`);
+    if (attempt.state === "done") {
+      publish(attempt.snapshot);
+      const summary = attempt.frozen.summary;
+      $("#plan-announcement").textContent = state.t("plan.success", {
+        date: attempt.frozen.date, exercises: summary.exercises, sets: summary.sets,
+      });
+      $("#plan-dialog").close();
+      state.planTrigger && state.planTrigger.focus();
+      state.planAttempt = null;
+      return;
+    }
+    if (attempt.state === "committed-refresh-failed") {
+      $("#plan-error").textContent = state.t("plan.savedRefreshFailed");
+    } else if (attempt.state === "hard-conflict") {
+      $("#plan-error").textContent = state.t("plan.hardConflict");
+    } else if (attempt.state === "retry-ready") {
+      $("#plan-error").textContent = state.t("plan.retryReady");
+    } else if (attempt.error) {
+      $("#plan-error").textContent = planError(attempt.error);
+    }
+  }
+
+  function setPlanLocked(locked) {
+    $("#plan-form").querySelectorAll("input, select, button").forEach((control) => {
+      if (!["plan-close", "plan-cancel"].includes(control.id)) control.disabled = locked;
+    });
+  }
+
+  function planError(error) {
+    const code = error && (error.code || error.message);
+    return state.t(`plan.error.${code}`) === `plan.error.${code}`
+      ? state.t("plan.error.generic")
+      : state.t(`plan.error.${code}`);
   }
 
   function populateFilters() {

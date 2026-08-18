@@ -72,7 +72,7 @@
       "id": "sample-1",
       "values": {
         "date": "2026-03-02",
-        "exercise": "示例：卧推",
+        "exercise": "杠铃卧推",
         "exercise_id": "0025",
         "status": "unknown",
         "sets": 4,
@@ -83,7 +83,7 @@
       "id": "sample-2",
       "values": {
         "date": "2026-03-02",
-        "exercise": "示例：单臂绳索下斜飞鸟",
+        "exercise": "单臂绳索下斜飞鸟",
         "exercise_id": "1262",
         "status": "unknown",
         "sets": 3,
@@ -94,7 +94,7 @@
       "id": "sample-3",
       "values": {
         "date": "2026-03-04",
-        "exercise": "示例：深蹲",
+        "exercise": "杠铃深蹲",
         "exercise_id": "0043",
         "status": "unknown",
         "sets": 5,
@@ -105,7 +105,7 @@
       "id": "sample-4",
       "values": {
         "date": "2026-03-04",
-        "exercise": "示例：高脚杯深蹲",
+        "exercise": "哑铃高脚杯深蹲",
         "exercise_id": "1760",
         "status": "unknown",
         "sets": 4,
@@ -116,7 +116,7 @@
       "id": "sample-5",
       "values": {
         "date": "2026-03-06",
-        "exercise": "示例：硬拉",
+        "exercise": "杠铃硬拉",
         "exercise_id": "0032",
         "status": "unknown",
         "sets": 4,
@@ -127,7 +127,7 @@
       "id": "sample-6",
       "values": {
         "date": "2026-03-06",
-        "exercise": "示例：引体向上",
+        "exercise": "射手引体向上",
         "exercise_id": "3293",
         "status": "unknown",
         "sets": 4,

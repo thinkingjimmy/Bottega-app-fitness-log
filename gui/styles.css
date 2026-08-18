@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 index.html 的语义区块、main.js 组装的人体 SVG（outline/figure/zone）与 data-level 热度、系统主题、reduced-motion 媒体查询
- * [OUTPUT]: 提供 1280×800、窄窗、200% zoom、深浅主题和键盘焦点下可读的离线界面
+ * [OUTPUT]: 提供 1280×800、窄窗、200% zoom、深浅主题和键盘焦点下可读的热力图/目录界面；plan 表单增量样式见 plan.css
  * [POS]: gui 的唯一样式表；OKLCH 热度保持单调且颜色之外始终保留数值文本
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */

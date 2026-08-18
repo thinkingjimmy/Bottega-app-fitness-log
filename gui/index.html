@@ -1,8 +1,8 @@
 <!doctype html>
 <!--
-  [INPUT]: 依赖同目录外置 CSS/JS 与生成器产出的本地 JSON/GIF；人体 SVG 由 main.js 按 data/body-map.json 组装，文案由 data-i18n 键位在运行时填充
-  [OUTPUT]: 提供离线 Fitness Log 动作目录、时间范围、男女正背面肌肉热力图与动作演示弹窗的语义骨架
-  [POS]: gui 固定唯一入口；只承载可访问 DOM、空 SVG 取景框与 i18n 键位，不含 inline script、外链、内联文案或 Base 写入口
+  [INPUT]: 依赖同目录外置 CSS/JS 与本地 JSON/GIF；人体 SVG 与训练计划行由 main.js 组装，文案由 data-i18n 键位填充
+  [OUTPUT]: 提供离线动作目录、肌肉热力图、动作详情与可访问的多动作训练计划 dialog 语义骨架
+  [POS]: gui 固定唯一入口；只承载 DOM/i18n 键位，不含 inline script、外链、token 或 owner 身份
   [PROTOCOL]: 变更时更新此头部，然后检查 README.md
 -->
 <html>
@@ -11,10 +11,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Fitness Log</title>
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./plan.css">
     <script defer src="./scripts/i18n.js"></script>
     <script defer src="./scripts/base-api.js"></script>
     <script defer src="./scripts/catalog.js"></script>
     <script defer src="./scripts/muscle-stats.js"></script>
+    <script defer src="./scripts/plan-builder.js"></script>
+    <script defer src="./scripts/plan-submission.js"></script>
     <script defer src="./scripts/main.js"></script>
   </head>
   <body>
@@ -24,7 +27,10 @@
         <h1 data-i18n="app.heading"></h1>
         <p class="subtitle" data-i18n="app.subtitle"></p>
       </div>
-      <div class="revision" aria-live="polite"><span data-i18n="app.revision"></span><strong id="revision">—</strong></div>
+      <div class="header-actions">
+        <button id="create-plan" class="primary" type="button" disabled data-i18n="plan.create"></button>
+        <div class="revision" aria-live="polite"><span data-i18n="app.revision"></span><strong id="revision">—</strong></div>
+      </div>
     </header>
 
     <main>
@@ -79,6 +85,32 @@
     </main>
 
     <dialog id="exercise-dialog"><button class="dialog-close" type="button" data-i18n-aria="dialog.close">×</button><div id="exercise-detail"></div></dialog>
+    <dialog id="plan-dialog" aria-labelledby="plan-title">
+      <form id="plan-form" method="dialog">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">PLAN</p><h2 id="plan-title" data-i18n="plan.title"></h2></div>
+          <button id="plan-close" class="dialog-close" type="button" data-i18n-aria="dialog.close">×</button>
+        </div>
+        <p id="plan-hint" class="subtitle" data-i18n="plan.hint"></p>
+        <label><span data-i18n="plan.date"></span><input id="plan-date" type="date" required></label>
+        <fieldset id="plan-items"><legend data-i18n="plan.exercises"></legend><div id="plan-list"></div></fieldset>
+        <button id="plan-add" type="button" data-i18n="plan.add"></button>
+        <p id="plan-error" class="status" role="alert" aria-live="assertive"></p>
+        <div class="dialog-actions">
+          <button id="plan-cancel" type="button" data-i18n="plan.cancel"></button>
+          <button id="plan-save" class="primary" type="submit" data-i18n="plan.save"></button>
+        </div>
+      </form>
+    </dialog>
+    <template id="plan-row-template">
+      <div class="plan-row">
+        <label class="plan-exercise"><span data-i18n="plan.exercise"></span><input class="plan-exercise-search" type="search" data-i18n-placeholder="plan.search" autocomplete="off"><select required></select></label>
+        <label><span data-i18n="plan.sets"></span><input class="plan-sets" type="number" min="1" step="1" value="3" required inputmode="numeric"></label>
+        <label><span data-i18n="plan.weight"></span><input class="plan-weight" type="number" min="0" step="0.5" value="0" required inputmode="decimal"></label>
+        <button class="plan-remove" type="button" data-i18n="plan.remove"></button>
+      </div>
+    </template>
+    <div id="plan-announcement" class="sr-only" aria-live="polite"></div>
     <footer><span data-i18n="footer.sources"></span> <span id="media-credit"></span> <span data-i18n="footer.disclaimer"></span></footer>
   </body>
 </html>

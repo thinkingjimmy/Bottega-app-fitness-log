@@ -1,7 +1,7 @@
 /**
- * [INPUT]: 依赖浏览器 fetch/location/history/visibility 与只读同源 /_api/base；允许测试注入 fetch、clock 和 document
- * [OUTPUT]: 通过 globalThis.FitnessBaseApi 提供 fragment（token + 宿主语言）一次性消费、结构化错误、跨 revision 原子分页与可停止/可恢复健康态的轮询客户端
- * [POS]: gui/scripts 的唯一 Base 数据端口；其它 GUI 模块不得直接 fetch 或持久化 token
+ * [INPUT]: 依赖浏览器 fetch/location/history/visibility 与同源 /_api/base；允许测试注入 fetch、clock 和 document
+ * [OUTPUT]: 通过 globalThis.FitnessBaseApi 提供 fragment 一次性消费、structured error、instance+revision 原子分页、batch row insert 与健康轮询
+ * [POS]: gui/scripts 的唯一 Base 数据端口；其它 GUI 模块不得直接 fetch 或持久化 token，200 后 refresh 由提交状态机收口
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
 
@@ -11,10 +11,11 @@
   "use strict";
 
   class BaseApiError extends Error {
-    constructor(status, message) {
+    constructor(status, message, details) {
       super(message);
       this.name = "BaseApiError";
       this.status = status;
+      Object.assign(this, details || {});
     }
   }
 
@@ -42,16 +43,30 @@
       this.pollingSession = null;
       this.timer = null;
       this.revision = null;
+      this.baseInstanceId = null;
     }
 
-    async request(path, signal) {
+    async request(path, signal, init) {
       const response = await this.fetch(path, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${this.token}` },
+        method: init && init.method || "GET",
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          ...(init && init.body ? { "Content-Type": "application/json" } : {}),
+        },
+        ...(init && init.body ? { body: JSON.stringify(init.body) } : {}),
         signal,
       });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new BaseApiError(response.status, body.error || `Base API ${response.status}`);
+      if (!response.ok) {
+        const error = body.error && typeof body.error === "object" ? body.error : {};
+        throw new BaseApiError(response.status, error.message || body.error || `Base API ${response.status}`, {
+          code: error.code || "unknown_error",
+          outcome: error.outcome || (response.status >= 500 ? "unknown" : "not-committed"),
+          issues: error.issues || [],
+          currentRevision: error.currentRevision,
+          retryAfter: response.headers && response.headers.get ? response.headers.get("retry-after") : null,
+        });
+      }
       return body;
     }
 
@@ -86,8 +101,11 @@
             cursor = page.nextCursor || "";
           } while (cursor);
           const end = await this.meta(signal);
-          if (end.revision !== start.revision) throw new BaseApiError(409, "Base revision 在尾部复核时变化");
+          if (end.revision !== start.revision || end.baseInstanceId !== start.baseInstanceId) {
+            throw new BaseApiError(409, "Base instance/revision 在尾部复核时变化", { code: "snapshot_changed", outcome: "not-committed" });
+          }
           this.revision = end.revision;
+          this.baseInstanceId = end.baseInstanceId;
           return { meta: end, rows };
         } catch (error) {
           if (!(error instanceof BaseApiError) || error.status !== 409 || attempt === delays.length) throw error;
@@ -95,6 +113,17 @@
         }
       }
       throw new BaseApiError(409, "Base 持续变化，请稍后重试");
+    }
+
+    insertRows(frozen, expectedRevision, signal) {
+      return this.request("/_api/base/rows", signal, {
+        method: "POST",
+        body: {
+          expectedBaseInstanceId: frozen.expectedBaseInstanceId,
+          expectedRevision,
+          rows: frozen.rows,
+        },
+      });
     }
 
     startPolling(onSnapshot, onError, interval = 5000) {
