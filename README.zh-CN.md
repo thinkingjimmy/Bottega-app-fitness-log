@@ -4,7 +4,7 @@
 
 ## 数据合同
 
-新 row 使用 `date`、`exercise`、`exercise_id`、`status`、`sets`、`weight` 六列。`status` 为 `planned | completed | unknown`；进展图和热力图只统计有合法目录 id 的 completed rows。所有 `sample-*` 永远排除，不冒充用户训练。
+新 row 使用 `date`、`exercise`、`exercise_id`、`status`、`sets`、`weight` 六列。`status` 为 `planned | completed | unknown`；进展图和热力图只统计有合法目录 id 的 completed rows。安装种子的 `sample-*` 使用 `status=unknown`，热力图还会按保留 id 前缀做第二重排除，绝不冒充用户训练。
 
 现有实例由通用 `migrations/base.json` 升级：只追加缺失的 v2 列，legacy row 写入 `status=unknown`，仅在动作名或别名精确且唯一时补 `exercise_id`。已有值绝不覆盖；同 id 列类型冲突时在任何写入前停止，并提示先导出恢复。
 

@@ -4,7 +4,7 @@ Fitness Log separates planned work from completed training. Use the App's chat t
 
 ## Data contract
 
-Every new row uses `date`, `exercise`, `exercise_id`, `status`, `sets`, and `weight`. `status` is `planned`, `completed`, or `unknown`; progress charts and the heatmap count only completed rows with a known catalog id. `sample-*` rows are always excluded from real statistics.
+Every new row uses `date`, `exercise`, `exercise_id`, `status`, `sets`, and `weight`. `status` is `planned`, `completed`, or `unknown`; progress charts and the heatmap count only completed rows with a known catalog id. Seed `sample-*` rows use `status=unknown`, and the heatmap also excludes their reserved id prefix defensively.
 
 Existing instances are upgraded by the generic `migrations/base.json` contract: missing v2 columns are appended, legacy rows receive `status=unknown`, and `exercise_id` is filled only for an exact unique catalog name or alias. Existing values are never overwritten; a conflicting column type stops with export/recovery guidance before any write.
 

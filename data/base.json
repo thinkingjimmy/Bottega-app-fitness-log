@@ -74,7 +74,7 @@
         "date": "2026-03-02",
         "exercise": "示例：卧推",
         "exercise_id": "0025",
-        "status": "completed",
+        "status": "unknown",
         "sets": 4,
         "weight": 60
       }
@@ -85,7 +85,7 @@
         "date": "2026-03-02",
         "exercise": "示例：单臂绳索下斜飞鸟",
         "exercise_id": "1262",
-        "status": "completed",
+        "status": "unknown",
         "sets": 3,
         "weight": 12
       }
@@ -96,7 +96,7 @@
         "date": "2026-03-04",
         "exercise": "示例：深蹲",
         "exercise_id": "0043",
-        "status": "completed",
+        "status": "unknown",
         "sets": 5,
         "weight": 80
       }
@@ -107,7 +107,7 @@
         "date": "2026-03-04",
         "exercise": "示例：高脚杯深蹲",
         "exercise_id": "1760",
-        "status": "completed",
+        "status": "unknown",
         "sets": 4,
         "weight": 140
       }
@@ -118,7 +118,7 @@
         "date": "2026-03-06",
         "exercise": "示例：硬拉",
         "exercise_id": "0032",
-        "status": "completed",
+        "status": "unknown",
         "sets": 4,
         "weight": 100
       }
@@ -129,7 +129,7 @@
         "date": "2026-03-06",
         "exercise": "示例：引体向上",
         "exercise_id": "3293",
-        "status": "completed",
+        "status": "unknown",
         "sets": 4,
         "weight": 0
       }

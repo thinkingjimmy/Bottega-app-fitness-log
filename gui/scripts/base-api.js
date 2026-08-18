@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖浏览器 fetch/location/history/visibility 与只读同源 /_api/base；允许测试注入 fetch、clock 和 document
- * [OUTPUT]: 通过 globalThis.FitnessBaseApi 提供 token 消费、结构化错误、跨 revision 原子分页与可暂停轮询客户端
+ * [OUTPUT]: 通过 globalThis.FitnessBaseApi 提供 token 消费、结构化错误、跨 revision 原子分页与可停止/可恢复健康态的轮询客户端
  * [POS]: gui/scripts 的唯一 Base 数据端口；其它 GUI 模块不得直接 fetch 或持久化 token
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
@@ -36,6 +36,8 @@
         sleep: (milliseconds) => new Promise((resolve) => global.setTimeout(resolve, milliseconds)),
       };
       this.abort = null;
+      this.pollAbort = null;
+      this.pollingSession = null;
       this.timer = null;
       this.revision = null;
     }
@@ -95,38 +97,78 @@
 
     startPolling(onSnapshot, onError, interval = 5000) {
       this.stopPolling();
+      const session = { active: true, inFlight: false, unhealthy: false };
+      this.pollingSession = session;
+      const isActive = () => this.pollingSession === session && session.active;
+      const schedule = () => {
+        if (!isActive()) return;
+        if (this.timer !== null) this.clock.clearTimeout(this.timer);
+        this.timer = this.clock.setTimeout(() => {
+          this.timer = null;
+          return tick();
+        }, interval);
+      };
       const tick = async () => {
-        if (this.document.hidden) return this.schedule(tick, interval);
+        if (!isActive() || session.inFlight) return;
+        if (this.document.hidden) return schedule();
+        session.inFlight = true;
+        const pollAbort = new AbortController();
+        this.pollAbort = pollAbort;
         try {
-          const meta = await this.meta(new AbortController().signal);
-          if (meta.revision !== this.revision) onSnapshot(await this.refresh());
+          const meta = await this.meta(pollAbort.signal);
+          if (!isActive()) return;
+          if (meta.revision !== this.revision || session.unhealthy) {
+            onSnapshot(await this.refresh());
+          }
+          session.unhealthy = false;
         } catch (error) {
+          if (!isActive() || isAbortError(error)) return;
           onError(error);
+          if (isFatalError(error)) {
+            this.stopPolling();
+            return;
+          }
+          session.unhealthy = true;
+        } finally {
+          if (this.pollAbort === pollAbort) this.pollAbort = null;
+          session.inFlight = false;
+          if (isActive()) schedule();
         }
-        this.schedule(tick, interval);
       };
       const visible = () => {
-        if (!this.document.hidden) void tick();
+        if (this.document.hidden || !isActive() || session.inFlight) return;
+        if (this.timer !== null) this.clock.clearTimeout(this.timer);
+        this.timer = null;
+        void tick();
       };
       this.visibilityHandler = visible;
       this.document.addEventListener("visibilitychange", visible);
-      this.schedule(tick, interval);
-      return () => this.stopPolling();
-    }
-
-    schedule(callback, delay) {
-      if (this.timer !== null) this.clock.clearTimeout(this.timer);
-      this.timer = this.clock.setTimeout(callback, delay);
+      schedule();
+      return () => {
+        if (this.pollingSession === session) this.stopPolling();
+      };
     }
 
     stopPolling() {
+      if (this.pollingSession) this.pollingSession.active = false;
+      this.pollingSession = null;
       if (this.timer !== null) this.clock.clearTimeout(this.timer);
       this.timer = null;
       if (this.visibilityHandler) this.document.removeEventListener("visibilitychange", this.visibilityHandler);
       this.visibilityHandler = null;
+      if (this.pollAbort) this.pollAbort.abort();
+      this.pollAbort = null;
       if (this.abort) this.abort.abort();
       this.abort = null;
     }
+  }
+
+  function isAbortError(error) {
+    return error instanceof Error && error.name === "AbortError";
+  }
+
+  function isFatalError(error) {
+    return error instanceof BaseApiError && [401, 403, 404, 410].includes(error.status);
   }
 
   global.FitnessBaseApi = { BaseApiError, Client, consumeToken };
