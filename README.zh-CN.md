@@ -1,42 +1,49 @@
 # 🏋️ 健身日志
 
-健身日志明确区分计划与已完成训练。在 Use chat 中录入；打开只读“应用”界面，可搜索 72 项离线动作目录并查看正背面肌肉热力图。“数据”始终是事实源。
+把你练了什么告诉 App，它替你记下组数，然后告诉你哪些肌肉真的被练到了——以及哪些被你悄悄跳过了。
 
-## 数据合同
+*[English](README.md)*
 
-新 row 使用 `date`、`exercise`、`exercise_id`、`status`、`sets`、`weight` 六列。`status` 为 `planned | completed | unknown`；进展图和热力图只统计有合法目录 id 的 completed rows。安装种子的 `sample-*` 使用 `status=unknown`，热力图还会按保留 id 前缀做第二重排除，绝不冒充用户训练。
+## 你会得到什么
 
-现有实例由通用 `migrations/base.json` 升级：只追加缺失的 v2 列，legacy row 写入 `status=unknown`，仅在动作名或别名精确且唯一时补 `exercise_id`。已有值绝不覆盖；同 id 列类型冲突时在任何写入前停止，并提示先导出恢复。
+**一张只回答「我漏练了什么」的肌肉热力图。**
+正面背面、男性女性体型，可看最近 7 / 30 / 90 天或全部。某个区域吃进的完成组数越多，颜色越深。点任意一块肌肉，就能看到是哪几个动作把它练到这个程度的。
 
-热力图只按组数计分，不按重量：目标区 ×1.0、协同肌群 ×0.65、每个次要区 ×0.35；同一区域在单个动作中重复时只取最高权重。展示强度固定为 `1 - exp(-score / 12)`，只是可视化尺度，不是训练或医疗建议。未纳入行会按原因显示诊断。
+**一份 72 个动作的离线目录。**
+按名称、别名、肌肉或器械搜索，按身体部位筛选。每个动作都能展开 180×180 演示动图、目标肌肉和分步说明。
 
-## 离线动作与解剖数据
+**计划和已完成，分得清清楚楚。**
+说「明天深蹲 5×5」记为计划；说「练完了」就把同一行标记为完成，不会多出一行。只有已完成的组数会进热力图，所以这张图从不替你美化。
 
-目录由 [`hasaneyldrm/exercises-dataset`](https://github.com/hasaneyldrm/exercises-dataset) 的固定提交 `7455efae41b330c265e7cd4b78dfa848e7ce5ebd` 生成。动作元数据和说明按其 MIT 许可分发，完整文本位于 `gui/data/exercises-dataset.LICENSE.txt`。
+**它说你的语言。**
+界面跟随应用语言——English、简体中文、日本語、Français、Español。动作说明提供中英文。
 
-正背面肌肉图由 [`HichamELBSI/react-native-body-highlighter`](https://github.com/HichamELBSI/react-native-body-highlighter) 的固定提交 `15df9e2dbc621450001960bed5a30e6a75357faa` 生成，按其 MIT 许可分发，完整文本位于 `gui/data/body-highlighter.LICENSE.txt`。只搬 SVG path 数据，不含 React Native 运行时、截图或其它上游资源。
+**没有任何数据离开你的电脑。**
+目录、人体图、动图全部随包分发，页面运行时零网络请求。
 
-本 App 不含上游图片、GIF 或其它 Gym visual 媒体。GUI 运行时零外网，只通过带 token 的只读 `/_api/base` 网关读取 Base。
+## 怎么用
 
-## 使用
+1. 打开 **Use chat**，描述一个计划，或一次已经完成的训练。
+2. 确认计划已完成时，App 会 patch 原来那一行，而不是插入新行。
+3. 在 **应用** 里看目录和热力图，在 **数据** 里检查或修正任意一行。
+4. 如果无法把你说的话唯一匹配到目录动作，App 会留空动作 id，而不是猜。
 
-1. 在 Use chat 描述计划或明确已完成的训练。
-2. 确认计划已完成时 patch 原 row，不重复插入。
-3. 在“应用”查看目录和热力图，在“数据”检查或修正 row。
-4. 未知动作让 `exercise_id` 留空；Agent 禁止猜 id。
+## 热力图怎么算
+
+只算 **组数，不算重量**，而且只算标记为已完成的训练。动作的主要目标区域拿满权重，协同肌群次之，每个次要区域再次之；同一个动作里重复出现的区域只取最高权重，不会重复计入。展示强度是一把可视化尺子，不是训练处方——这个 App 记录覆盖，不做指导。
+
+## 致谢与授权
+
+动作数据、说明与翻译来自 [`hasaneyldrm/exercises-dataset`](https://github.com/hasaneyldrm/exercises-dataset)（MIT）。解剖级人体图来自 [`HichamELBSI/react-native-body-highlighter`](https://github.com/HichamELBSI/react-native-body-highlighter)（MIT）。
+
+动作演示动图版权为 **© Gym visual — https://gymvisual.com/**，按独立授权以 180×180 分辨率随包分发，出现在哪里就把署名带到哪里。它们**不在**上述 MIT 许可覆盖范围内，条款见 `gui/data/gym-visual.NOTICE.md`。若你想复用这些动图，请自行向 Gym visual 取得授权。
+
+App 代码为 MIT。所有上游许可证全文、固定 commit 与内容哈希都随包放在 `gui/data/`。
 
 ## 依赖
 
-无。App 只使用 AI Chat 内置 Base 工具与只读 GUI 网关。
+无。App 只使用 AI Chat 内置的 Base 工具与只读 GUI 网关。
 
-## 包结构
+---
 
-- `app.json`：Base App manifest。
-- `data/base.json`：v2 六列安装种子与 completed-only 进展视图。
-- `migrations/base.json`：通用、幂等的 live Base 升级描述符。
-- `gui/`：固定离线 GUI Surface 入口、脚本、固定动作目录与解剖级人体几何数据。
-- `.agents/skills/workout-entry/SKILL.md`：planned/completed 录入协议。
-
-## 许可
-
-App 代码：MIT。两个上游项目均为 MIT，完整许可证文本、固定 commit 与媒体例外保留在 `gui/data/*.LICENSE.txt` 与 `gui/data/*source*.json`。
+*架构说明就放在代码旁边：界面看 [`gui/README.md`](gui/README.md)，模块看 [`gui/scripts/README.md`](gui/scripts/README.md)，生成数据与供应链取证看 [`gui/data/README.md`](gui/data/README.md)。*

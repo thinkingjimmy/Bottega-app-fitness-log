@@ -2,7 +2,13 @@
   "sourceRepo": "https://github.com/hasaneyldrm/exercises-dataset",
   "sourceCommit": "7455efae41b330c265e7cd4b78dfa848e7ce5ebd",
   "sourceJsonSha256": "656634224b8977b99a6d765470ee123260d4979715eaa4e7c0b7c8bb0d79f93d",
-  "generatorVersion": 1,
-  "generatedExercisesSha256": "ad4b9b47994617bb94dfd5b2d372a117fe8e6cf54aea6a0dd68ea1c22dbd7a88",
-  "mediaIncluded": false
+  "generatorVersion": 2,
+  "generatedExercisesSha256": "9036e8470b513d6c87c6db93a8e074154720e79e22f4fdbc4d10d5da93a394ad",
+  "mediaIncluded": true,
+  "mediaLicense": "gym-visual.NOTICE.md",
+  "mediaAttribution": "© Gym visual — https://gymvisual.com/",
+  "mediaResolution": "180x180",
+  "mediaCount": 72,
+  "mediaBytes": 6743837,
+  "mediaSha256": "bd028ce05d4e7d2c67731fa83f4fcec322d002abbba49f49b1fa2f15c18c6a05"
 }

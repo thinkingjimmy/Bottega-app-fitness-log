@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖浏览器 fetch/location/history/visibility 与只读同源 /_api/base；允许测试注入 fetch、clock 和 document
- * [OUTPUT]: 通过 globalThis.FitnessBaseApi 提供 token 消费、结构化错误、跨 revision 原子分页与可停止/可恢复健康态的轮询客户端
+ * [OUTPUT]: 通过 globalThis.FitnessBaseApi 提供 fragment（token + 宿主语言）一次性消费、结构化错误、跨 revision 原子分页与可停止/可恢复健康态的轮询客户端
  * [POS]: gui/scripts 的唯一 Base 数据端口；其它 GUI 模块不得直接 fetch 或持久化 token
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
@@ -18,11 +18,13 @@
     }
   }
 
-  function consumeToken(locationLike, historyLike) {
+  /* fragment 一次性消费：token 与宿主语言一起取走，再把 hash 抹掉。
+     分两次读会让第二次拿到空——所以这里只暴露一个出口。 */
+  function consumeFragment(locationLike, historyLike) {
     const params = new URLSearchParams(String(locationLike.hash || "").replace(/^#/, ""));
-    const token = params.get("baseToken") || "";
+    const fragment = { token: params.get("baseToken") || "", lang: params.get("lang") || "" };
     historyLike.replaceState(null, "", `${locationLike.pathname}${locationLike.search}`);
-    return token;
+    return fragment;
   }
 
   class Client {
@@ -171,5 +173,5 @@
     return error instanceof BaseApiError && [401, 403, 404, 410].includes(error.status);
   }
 
-  global.FitnessBaseApi = { BaseApiError, Client, consumeToken };
+  global.FitnessBaseApi = { BaseApiError, Client, consumeFragment };
 })(globalThis);

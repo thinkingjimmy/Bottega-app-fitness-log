@@ -1,16 +1,17 @@
 <!doctype html>
 <!--
-  [INPUT]: 依赖同目录外置 CSS/JS 与生成器产出的本地 JSON；人体 SVG 由 main.js 按 data/body-map.json 组装
-  [OUTPUT]: 提供离线 Fitness Log 动作目录、训练诊断、时间范围和正背面肌肉热力图语义骨架
-  [POS]: gui 固定唯一入口；只承载可访问 DOM 与两个空 SVG 取景框，不含 inline script、外链、媒体或 Base 写入口
+  [INPUT]: 依赖同目录外置 CSS/JS 与生成器产出的本地 JSON/GIF；人体 SVG 由 main.js 按 data/body-map.json 组装，文案由 data-i18n 键位在运行时填充
+  [OUTPUT]: 提供离线 Fitness Log 动作目录、时间范围、男女正背面肌肉热力图与动作演示弹窗的语义骨架
+  [POS]: gui 固定唯一入口；只承载可访问 DOM、空 SVG 取景框与 i18n 键位，不含 inline script、外链、内联文案或 Base 写入口
   [PROTOCOL]: 变更时更新此头部，然后检查 README.md
 -->
-<html lang="zh-CN">
+<html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Fitness Log · 训练覆盖</title>
+    <title>Fitness Log</title>
     <link rel="stylesheet" href="./styles.css">
+    <script defer src="./scripts/i18n.js"></script>
     <script defer src="./scripts/base-api.js"></script>
     <script defer src="./scripts/catalog.js"></script>
     <script defer src="./scripts/muscle-stats.js"></script>
@@ -20,49 +21,64 @@
     <header class="app-header">
       <div>
         <p class="eyebrow">FITNESS LOG</p>
-        <h1>训练覆盖，而不是训练建议</h1>
-        <p class="subtitle">只统计已完成训练的组数。通过 Use chat 或“数据”录入与更正。</p>
+        <h1 data-i18n="app.heading"></h1>
+        <p class="subtitle" data-i18n="app.subtitle"></p>
       </div>
-      <div class="revision" aria-live="polite"><span>Base revision</span><strong id="revision">—</strong></div>
+      <div class="revision" aria-live="polite"><span data-i18n="app.revision"></span><strong id="revision">—</strong></div>
     </header>
 
     <main>
       <section class="heat-panel" aria-labelledby="heat-title">
         <div class="section-heading">
-          <div><p class="eyebrow">MUSCLE MAP</p><h2 id="heat-title">肌肉热力图</h2></div>
-          <label>时间范围
-            <select id="range"><option value="7">最近 7 天</option><option value="30" selected>最近 30 天</option><option value="90">最近 90 天</option><option value="all">全部</option></select>
-          </label>
+          <div><p class="eyebrow">MUSCLE MAP</p><h2 id="heat-title" data-i18n="map.title"></h2></div>
+          <div class="map-controls">
+            <label><span data-i18n="map.body"></span>
+              <select id="gender">
+                <option value="male" data-i18n="map.body.male"></option>
+                <option value="female" data-i18n="map.body.female"></option>
+              </select>
+            </label>
+            <label><span data-i18n="map.range"></span>
+              <select id="range">
+                <option value="7" data-i18n="map.range.7"></option>
+                <option value="30" selected data-i18n="map.range.30"></option>
+                <option value="90" data-i18n="map.range.90"></option>
+                <option value="all" data-i18n="map.range.all"></option>
+              </select>
+            </label>
+          </div>
         </div>
-        <div id="status" class="status" role="status">正在读取训练数据…</div>
+        <div id="status" class="status" role="status" data-i18n="status.loading"></div>
         <div class="body-maps">
-          <figure><figcaption>正面</figcaption>
-            <svg class="body" data-view="front" role="img" aria-label="正面人体肌肉训练覆盖图"></svg>
+          <figure><figcaption data-i18n="map.front"></figcaption>
+            <svg class="body" data-view="front" role="img" data-i18n-aria="map.frontAria"></svg>
           </figure>
-          <figure><figcaption>背面</figcaption>
-            <svg class="body" data-view="back" role="img" aria-label="背面人体肌肉训练覆盖图"></svg>
+          <figure><figcaption data-i18n="map.back"></figcaption>
+            <svg class="body" data-view="back" role="img" data-i18n-aria="map.backAria"></svg>
           </figure>
         </div>
-        <div class="legend"><span>0</span><i></i><i></i><i></i><i></i><i></i><span>高</span></div>
-        <section id="muscle-detail" class="detail" aria-live="polite"><h3>选择一个肌肉区域</h3><p>可用鼠标点击，或用 Tab 聚焦后按 Enter。</p></section>
-        <details><summary id="diagnostic-summary">未纳入统计：0 条</summary><ul id="diagnostics"></ul></details>
+        <div class="legend"><span data-i18n="map.legendLow"></span><i></i><i></i><i></i><i></i><i></i><span data-i18n="map.legendHigh"></span></div>
+        <section id="muscle-detail" class="detail" aria-live="polite"></section>
       </section>
 
       <section class="catalog-panel" aria-labelledby="catalog-title">
-        <div class="section-heading"><div><p class="eyebrow">72 EXERCISES · OFFLINE</p><h2 id="catalog-title">动作目录</h2></div><button id="clear" type="button">清除筛选</button></div>
+        <div class="section-heading">
+          <div><p class="eyebrow" id="catalog-eyebrow"></p><h2 id="catalog-title" data-i18n="catalog.title"></h2></div>
+          <button id="clear" type="button" data-i18n="catalog.clear"></button>
+        </div>
         <div class="filters">
-          <label class="search">搜索<input id="query" type="search" placeholder="名称、别名、肌肉或器械"></label>
-          <label>身体部位<select id="body-filter"><option value="">全部</option></select></label>
-          <label>肌肉区域<select id="muscle-filter"><option value="">全部</option></select></label>
-          <label>器械<select id="equipment-filter"><option value="">全部</option></select></label>
+          <label class="search"><span data-i18n="catalog.search"></span><input id="query" type="search" data-i18n-placeholder="catalog.searchHint"></label>
+          <label><span data-i18n="catalog.bodyPart"></span><select id="body-filter"><option value="" data-i18n="catalog.all"></option></select></label>
+          <label><span data-i18n="catalog.muscle"></span><select id="muscle-filter"><option value="" data-i18n="catalog.all"></option></select></label>
+          <label><span data-i18n="catalog.equipment"></span><select id="equipment-filter"><option value="" data-i18n="catalog.all"></option></select></label>
         </div>
         <p id="result-count" class="result-count"></p>
         <div id="catalog" class="catalog" aria-live="polite"></div>
-        <button id="more" class="more" type="button">显示更多</button>
+        <button id="more" class="more" type="button" data-i18n="catalog.more"></button>
       </section>
     </main>
 
-    <dialog id="exercise-dialog"><button class="dialog-close" type="button" aria-label="关闭">×</button><div id="exercise-detail"></div></dialog>
-    <footer>动作元数据与说明来自 hasaneyldrm/exercises-dataset（固定 commit 7455efae…，MIT）；人体肌肉矢量图来自 HichamELBSI/react-native-body-highlighter（固定 commit 15df9e2d…，MIT）。未使用上游图片、GIF 或截图。本页面不构成医疗或训练建议。</footer>
+    <dialog id="exercise-dialog"><button class="dialog-close" type="button" data-i18n-aria="dialog.close">×</button><div id="exercise-detail"></div></dialog>
+    <footer><span data-i18n="footer.sources"></span> <span id="media-credit"></span> <span data-i18n="footer.disclaimer"></span></footer>
   </body>
 </html>

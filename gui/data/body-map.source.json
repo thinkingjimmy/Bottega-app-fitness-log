@@ -1,9 +1,20 @@
 {
   "sourceRepo": "https://github.com/HichamELBSI/react-native-body-highlighter",
   "sourceCommit": "15df9e2dbc621450001960bed5a30e6a75357faa",
-  "sourceAssetsSha256": "0abce53763f4378fb15dc464df49932ebd5617a59598f4df961a5f0c3a624f18",
-  "generatorVersion": 1,
-  "generatedBodyMapSha256": "8fdbc8e5769874bae1d08fedfae6eef5d1beda135bf875c184de4022e3712cc2",
+  "sourceAssetsSha256": "c5ccd1e8cd316a7664dd109b2e85949d5d8dd7f880706b74d25b089df06b4282",
+  "generatorVersion": 2,
+  "generatedBodyMapSha256": "15c82a40623de4f1dc6037d5eb30ce4bd2edce0e4b1c4e257ec5857ad60e880a",
+  "genders": [
+    "male",
+    "female"
+  ],
+  "locales": [
+    "zh-CN",
+    "en",
+    "ja",
+    "fr",
+    "es"
+  ],
   "mediaIncluded": false,
   "runtimeIncluded": false
 }

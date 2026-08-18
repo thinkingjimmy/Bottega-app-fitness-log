@@ -1,0 +1,243 @@
+/**
+ * [INPUT]: 只依赖 BCP-47 语言标记字符串；不碰 DOM、fetch、Base 或任何全局状态
+ * [OUTPUT]: 通过 globalThis.FitnessI18n 提供 5 语言 UI 文案、语言协商与 {n} 插值纯函数
+ * [POS]: gui/scripts 的界面文案真相源；肌肉名不在这里——那是 data/muscle-regions.json 的多语言标签，由生成器与目录三方互证
+ * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
+ */
+
+(function exposeI18n(global) {
+  "use strict";
+
+  /* 与宿主 AppLocale 同一套五语言。英文兜底，因为上游动作说明只有 en/zh。 */
+  const FALLBACK = "en";
+  const STRINGS = {
+    "zh-CN": {
+      "app.title": "健身日志 · 训练覆盖",
+      "app.heading": "训练覆盖，而不是训练建议",
+      "app.subtitle": "只统计已完成训练的组数。通过 Use chat 或“数据”录入与更正。",
+      "app.revision": "Base 版本",
+      "map.title": "肌肉热力图",
+      "map.range": "时间范围",
+      "map.range.7": "最近 7 天", "map.range.30": "最近 30 天", "map.range.90": "最近 90 天", "map.range.all": "全部",
+      "map.body": "体型", "map.body.male": "男性", "map.body.female": "女性",
+      "map.front": "正面", "map.back": "背面",
+      "map.frontAria": "正面人体肌肉训练覆盖图", "map.backAria": "背面人体肌肉训练覆盖图",
+      "map.legendLow": "0", "map.legendHigh": "高",
+      "map.pick": "选择一个肌肉区域",
+      "map.pickHint": "可用鼠标点击，或用 Tab 聚焦后按 Enter。",
+      "map.score": "得分", "map.sets": "完成组数", "map.records": "训练记录",
+      "map.setsUnit": "{n} 组", "map.contribution": "贡献 {n}", "map.noRows": "所选范围内暂无合规记录。",
+      "status.loading": "正在读取训练数据…",
+      "status.ok": "已读取 {n} 行；页面每 5 秒检查更新。",
+      "status.schema": "数据表结构不完整：{issues}。请前往“数据”修复。",
+      "error.401": "登录状态已过期，请刷新应用。",
+      "error.404": "该 App 尚无数据。",
+      "error.410": "App 已切换版本，请刷新应用。",
+      "error.5xx": "数据服务暂时不可用。",
+      "error.generic": "读取失败。",
+      "error.resource": "本地资源加载失败：{path}",
+      "error.stale": " 正在保留上次成功的数据。",
+      "catalog.eyebrow": "{n} 个离线动作",
+      "catalog.title": "动作目录", "catalog.clear": "清除筛选", "catalog.search": "搜索",
+      "catalog.searchHint": "名称、别名、肌肉或器械",
+      "catalog.bodyPart": "身体部位", "catalog.muscle": "肌肉区域", "catalog.equipment": "器械",
+      "catalog.all": "全部", "catalog.count": "{n} 个动作", "catalog.more": "显示更多",
+      "catalog.empty": "没有匹配动作。清除筛选后再试。",
+      "card.target": "主要肌肉", "card.equipment": "器械", "card.secondary": "次要肌肉", "card.none": "无",
+      "dialog.close": "关闭", "dialog.group": "协同肌肉", "dialog.zones": "覆盖区域",
+      "dialog.howto": "动作说明", "dialog.english": "English",
+      "media.alt": "{name} 动作演示动画",
+      "punct.label": "：", "punct.list": "、",
+      "footer.sources": "动作数据与说明来自 exercises-dataset（MIT）；人体肌肉图来自 react-native-body-highlighter（MIT）。",
+      "footer.disclaimer": "本页面不构成医疗或训练建议。",
+    },
+    en: {
+      "app.title": "Fitness Log · Training coverage",
+      "app.heading": "Coverage, not coaching",
+      "app.subtitle": "Counts completed sets only. Log and correct entries through Use chat or the data table.",
+      "app.revision": "Revision",
+      "map.title": "Muscle heatmap",
+      "map.range": "Time range",
+      "map.range.7": "Last 7 days", "map.range.30": "Last 30 days", "map.range.90": "Last 90 days", "map.range.all": "All time",
+      "map.body": "Body", "map.body.male": "Male", "map.body.female": "Female",
+      "map.front": "Front", "map.back": "Back",
+      "map.frontAria": "Front body muscle coverage map", "map.backAria": "Back body muscle coverage map",
+      "map.legendLow": "0", "map.legendHigh": "High",
+      "map.pick": "Pick a muscle region",
+      "map.pickHint": "Click it, or focus with Tab and press Enter.",
+      "map.score": "Score", "map.sets": "Completed sets", "map.records": "Entries",
+      "map.setsUnit": "{n} sets", "map.contribution": "contributes {n}", "map.noRows": "No qualifying entries in this range.",
+      "status.loading": "Loading training data…",
+      "status.ok": "Read {n} rows; the page checks for updates every 5 seconds.",
+      "status.schema": "Table schema is incomplete: {issues}. Fix it in the data table.",
+      "error.401": "Your session expired — reload the app.",
+      "error.404": "This App has no data yet.",
+      "error.410": "The App switched versions — reload the app.",
+      "error.5xx": "The data service is temporarily unavailable.",
+      "error.generic": "Could not read the data.",
+      "error.resource": "Failed to load local resource: {path}",
+      "error.stale": " Showing the last successful read.",
+      "catalog.eyebrow": "{n} offline exercises",
+      "catalog.title": "Exercise catalog", "catalog.clear": "Clear filters", "catalog.search": "Search",
+      "catalog.searchHint": "Name, alias, muscle, or equipment",
+      "catalog.bodyPart": "Body part", "catalog.muscle": "Muscle region", "catalog.equipment": "Equipment",
+      "catalog.all": "All", "catalog.count": "{n} exercises", "catalog.more": "Show more",
+      "catalog.empty": "No matching exercises. Clear the filters and try again.",
+      "card.target": "Target", "card.equipment": "Equipment", "card.secondary": "Secondary", "card.none": "None",
+      "dialog.close": "Close", "dialog.group": "Synergists", "dialog.zones": "Covered regions",
+      "dialog.howto": "How to do it", "dialog.english": "English",
+      "media.alt": "{name} exercise animation",
+      "punct.label": ": ", "punct.list": ", ",
+      "footer.sources": "Exercise data and instructions from exercises-dataset (MIT); body map from react-native-body-highlighter (MIT).",
+      "footer.disclaimer": "This page is not medical or training advice.",
+    },
+    ja: {
+      "app.title": "フィットネスログ · トレーニングカバレッジ",
+      "app.heading": "指導ではなく、カバレッジを",
+      "app.subtitle": "完了したセットのみを集計します。Use chat または「データ」から記録・修正できます。",
+      "app.revision": "リビジョン",
+      "map.title": "筋肉ヒートマップ",
+      "map.range": "期間",
+      "map.range.7": "過去 7 日", "map.range.30": "過去 30 日", "map.range.90": "過去 90 日", "map.range.all": "全期間",
+      "map.body": "体型", "map.body.male": "男性", "map.body.female": "女性",
+      "map.front": "正面", "map.back": "背面",
+      "map.frontAria": "正面の筋肉カバレッジ図", "map.backAria": "背面の筋肉カバレッジ図",
+      "map.legendLow": "0", "map.legendHigh": "高",
+      "map.pick": "筋肉の部位を選択してください",
+      "map.pickHint": "クリックするか、Tab でフォーカスして Enter を押します。",
+      "map.score": "スコア", "map.sets": "完了セット数", "map.records": "記録数",
+      "map.setsUnit": "{n} セット", "map.contribution": "寄与 {n}", "map.noRows": "この期間に該当する記録はありません。",
+      "status.loading": "トレーニングデータを読み込み中…",
+      "status.ok": "{n} 行を読み込みました。5 秒ごとに更新を確認します。",
+      "status.schema": "テーブル構成が不完全です：{issues}。「データ」で修正してください。",
+      "error.401": "セッションの有効期限が切れました。アプリを再読み込みしてください。",
+      "error.404": "この App にはまだデータがありません。",
+      "error.410": "App のバージョンが切り替わりました。再読み込みしてください。",
+      "error.5xx": "データサービスが一時的に利用できません。",
+      "error.generic": "読み込みに失敗しました。",
+      "error.resource": "ローカルリソースの読み込みに失敗しました：{path}",
+      "error.stale": " 前回成功した内容を表示しています。",
+      "catalog.eyebrow": "オフライン {n} 種目",
+      "catalog.title": "種目カタログ", "catalog.clear": "フィルターをクリア", "catalog.search": "検索",
+      "catalog.searchHint": "名称・別名・筋肉・器具",
+      "catalog.bodyPart": "部位", "catalog.muscle": "筋肉領域", "catalog.equipment": "器具",
+      "catalog.all": "すべて", "catalog.count": "{n} 種目", "catalog.more": "さらに表示",
+      "catalog.empty": "一致する種目がありません。フィルターをクリアしてください。",
+      "card.target": "主働筋", "card.equipment": "器具", "card.secondary": "補助筋", "card.none": "なし",
+      "dialog.close": "閉じる", "dialog.group": "協働筋", "dialog.zones": "対象領域",
+      "dialog.howto": "やり方", "dialog.english": "English",
+      "media.alt": "{name} の動作アニメーション",
+      "punct.label": "：", "punct.list": "・",
+      "footer.sources": "種目データと説明は exercises-dataset（MIT）、人体図は react-native-body-highlighter（MIT）より。",
+      "footer.disclaimer": "本ページは医療・トレーニング上の助言ではありません。",
+    },
+    fr: {
+      "app.title": "Fitness Log · Couverture d'entraînement",
+      "app.heading": "De la couverture, pas des conseils",
+      "app.subtitle": "Seules les séries terminées sont comptées. Saisissez et corrigez via Use chat ou le tableau de données.",
+      "app.revision": "Révision",
+      "map.title": "Carte thermique musculaire",
+      "map.range": "Période",
+      "map.range.7": "7 derniers jours", "map.range.30": "30 derniers jours", "map.range.90": "90 derniers jours", "map.range.all": "Tout",
+      "map.body": "Morphologie", "map.body.male": "Homme", "map.body.female": "Femme",
+      "map.front": "Face", "map.back": "Dos",
+      "map.frontAria": "Carte de couverture musculaire, vue de face", "map.backAria": "Carte de couverture musculaire, vue de dos",
+      "map.legendLow": "0", "map.legendHigh": "Élevé",
+      "map.pick": "Choisissez une région musculaire",
+      "map.pickHint": "Cliquez, ou placez le focus avec Tab puis Entrée.",
+      "map.score": "Score", "map.sets": "Séries terminées", "map.records": "Entrées",
+      "map.setsUnit": "{n} séries", "map.contribution": "contribue {n}", "map.noRows": "Aucune entrée valide sur cette période.",
+      "status.loading": "Chargement des données d'entraînement…",
+      "status.ok": "{n} lignes lues ; la page vérifie les mises à jour toutes les 5 secondes.",
+      "status.schema": "Structure de table incomplète : {issues}. Corrigez-la dans le tableau de données.",
+      "error.401": "Votre session a expiré — rechargez l'application.",
+      "error.404": "Cette App n'a pas encore de données.",
+      "error.410": "L'App a changé de version — rechargez l'application.",
+      "error.5xx": "Le service de données est momentanément indisponible.",
+      "error.generic": "Lecture impossible.",
+      "error.resource": "Échec du chargement de la ressource locale : {path}",
+      "error.stale": " Affichage de la dernière lecture réussie.",
+      "catalog.eyebrow": "{n} exercices hors ligne",
+      "catalog.title": "Catalogue d'exercices", "catalog.clear": "Effacer les filtres", "catalog.search": "Rechercher",
+      "catalog.searchHint": "Nom, alias, muscle ou matériel",
+      "catalog.bodyPart": "Partie du corps", "catalog.muscle": "Région musculaire", "catalog.equipment": "Matériel",
+      "catalog.all": "Tous", "catalog.count": "{n} exercices", "catalog.more": "Afficher plus",
+      "catalog.empty": "Aucun exercice correspondant. Effacez les filtres et réessayez.",
+      "card.target": "Muscle cible", "card.equipment": "Matériel", "card.secondary": "Muscles secondaires", "card.none": "Aucun",
+      "dialog.close": "Fermer", "dialog.group": "Synergistes", "dialog.zones": "Régions couvertes",
+      "dialog.howto": "Exécution", "dialog.english": "English",
+      "media.alt": "Animation de l'exercice {name}",
+      "punct.label": " : ", "punct.list": ", ",
+      "footer.sources": "Données et instructions issues d'exercises-dataset (MIT) ; carte corporelle de react-native-body-highlighter (MIT).",
+      "footer.disclaimer": "Cette page ne constitue pas un avis médical ni un conseil d'entraînement.",
+    },
+    es: {
+      "app.title": "Fitness Log · Cobertura de entrenamiento",
+      "app.heading": "Cobertura, no asesoramiento",
+      "app.subtitle": "Solo cuenta las series completadas. Registra y corrige desde Use chat o la tabla de datos.",
+      "app.revision": "Revisión",
+      "map.title": "Mapa de calor muscular",
+      "map.range": "Periodo",
+      "map.range.7": "Últimos 7 días", "map.range.30": "Últimos 30 días", "map.range.90": "Últimos 90 días", "map.range.all": "Todo",
+      "map.body": "Cuerpo", "map.body.male": "Hombre", "map.body.female": "Mujer",
+      "map.front": "Frente", "map.back": "Espalda",
+      "map.frontAria": "Mapa de cobertura muscular, vista frontal", "map.backAria": "Mapa de cobertura muscular, vista posterior",
+      "map.legendLow": "0", "map.legendHigh": "Alto",
+      "map.pick": "Elige una región muscular",
+      "map.pickHint": "Haz clic, o enfoca con Tab y pulsa Intro.",
+      "map.score": "Puntuación", "map.sets": "Series completadas", "map.records": "Registros",
+      "map.setsUnit": "{n} series", "map.contribution": "aporta {n}", "map.noRows": "No hay registros válidos en este periodo.",
+      "status.loading": "Cargando datos de entrenamiento…",
+      "status.ok": "Se leyeron {n} filas; la página busca cambios cada 5 segundos.",
+      "status.schema": "La estructura de la tabla está incompleta: {issues}. Corrígela en la tabla de datos.",
+      "error.401": "Tu sesión caducó: recarga la aplicación.",
+      "error.404": "Esta App todavía no tiene datos.",
+      "error.410": "La App cambió de versión: recarga la aplicación.",
+      "error.5xx": "El servicio de datos no está disponible temporalmente.",
+      "error.generic": "No se pudo leer.",
+      "error.resource": "No se pudo cargar el recurso local: {path}",
+      "error.stale": " Mostrando la última lectura correcta.",
+      "catalog.eyebrow": "{n} ejercicios sin conexión",
+      "catalog.title": "Catálogo de ejercicios", "catalog.clear": "Borrar filtros", "catalog.search": "Buscar",
+      "catalog.searchHint": "Nombre, alias, músculo o equipo",
+      "catalog.bodyPart": "Parte del cuerpo", "catalog.muscle": "Región muscular", "catalog.equipment": "Equipo",
+      "catalog.all": "Todos", "catalog.count": "{n} ejercicios", "catalog.more": "Mostrar más",
+      "catalog.empty": "No hay ejercicios que coincidan. Borra los filtros e inténtalo de nuevo.",
+      "card.target": "Músculo principal", "card.equipment": "Equipo", "card.secondary": "Músculos secundarios", "card.none": "Ninguno",
+      "dialog.close": "Cerrar", "dialog.group": "Sinergistas", "dialog.zones": "Regiones cubiertas",
+      "dialog.howto": "Cómo hacerlo", "dialog.english": "English",
+      "media.alt": "Animación del ejercicio {name}",
+      "punct.label": ": ", "punct.list": ", ",
+      "footer.sources": "Datos e instrucciones de exercises-dataset (MIT); mapa corporal de react-native-body-highlighter (MIT).",
+      "footer.disclaimer": "Esta página no constituye asesoramiento médico ni de entrenamiento.",
+    },
+  };
+
+  const LOCALES = Object.keys(STRINGS);
+
+  /* 宿主传的是精确 AppLocale，但独立打开时只有 navigator.language。
+     先精确、再取主语言、最后英文——中文任何地区变体都归 zh-CN。 */
+  function resolve(tag) {
+    const wanted = String(tag || "").trim();
+    if (STRINGS[wanted]) return wanted;
+    const primary = wanted.toLowerCase().split(/[-_]/)[0];
+    if (primary === "zh") return "zh-CN";
+    return LOCALES.find((locale) => locale.toLowerCase().split("-")[0] === primary) || FALLBACK;
+  }
+
+  function translator(locale) {
+    const table = STRINGS[resolve(locale)];
+    return function translate(key, values) {
+      const template = table[key] ?? STRINGS[FALLBACK][key] ?? key;
+      return values ? format(template, values) : template;
+    };
+  }
+
+  function format(template, values) {
+    return template.replace(/\{(\w+)\}/g, (match, name) =>
+      Object.prototype.hasOwnProperty.call(values, name) ? String(values[name]) : match
+    );
+  }
+
+  global.FitnessI18n = { LOCALES, FALLBACK, resolve, translator, keys: () => Object.keys(STRINGS[FALLBACK]) };
+})(globalThis);

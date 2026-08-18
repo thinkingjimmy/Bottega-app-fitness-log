@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 接收 Base rows、六列 meta、固定动作目录、时间范围与当前时间
  * [OUTPUT]: 通过 globalThis.FitnessMuscleStats 提供 schema 诊断、本地日历范围与正整数 sets 的 completed row 过滤、按最高字段权重计分、固定色阶和下钻贡献纯函数
- * [POS]: gui/scripts 的训练统计真相源；不接触 DOM/fetch，sample/planned/unknown/非法值永不混入得分
+ * [POS]: gui/scripts 的训练统计真相源；不接触 DOM/fetch，planned/unknown/非法值永不混入得分；预设行按普通数据对待，不按 id 前缀特判
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
 
@@ -42,7 +42,7 @@
         const points = sets * Number(weight);
         scores[zone] = (scores[zone] || 0) + points;
         const list = contributions[zone] || [];
-        list.push({ rowId: row.id, exerciseId: exercise.id, exercise: exercise.aliases[0] || exercise.name, sets, points });
+        list.push({ rowId: row.id, exerciseId: exercise.id, sets, points });
         contributions[zone] = list;
       });
     });
@@ -51,7 +51,6 @@
   }
 
   function exclusionReason(row, values, byId, minimum, now) {
-    if (String(row.id).startsWith("sample-")) return "sample";
     if (values.status !== "completed") return values.status === "planned" ? "planned" : "status-unknown";
     if (!values.exercise_id || !byId.has(values.exercise_id)) return "exercise-unknown";
     if (!Number.isInteger(values.sets) || values.sets <= 0) return "sets-invalid";

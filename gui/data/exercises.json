@@ -17,6 +17,10 @@
       "triceps",
       "shoulders"
     ],
+    "media": {
+      "gif": "0025.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "chest",
@@ -46,6 +50,10 @@
       "shoulders",
       "triceps"
     ],
+    "media": {
+      "gif": "0047.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "chest",
@@ -75,6 +83,10 @@
       "triceps",
       "shoulders"
     ],
+    "media": {
+      "gif": "0289.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "chest",
@@ -104,6 +116,10 @@
       "shoulders",
       "triceps"
     ],
+    "media": {
+      "gif": "0314.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "chest",
@@ -134,6 +150,10 @@
       "shoulders",
       "core"
     ],
+    "media": {
+      "gif": "0258.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "anterior_lateral_deltoids",
@@ -165,6 +185,10 @@
       "shoulders",
       "triceps"
     ],
+    "media": {
+      "gif": "1262.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "chest",
@@ -194,6 +218,10 @@
       "biceps",
       "forearms"
     ],
+    "media": {
+      "gif": "0027.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms",
@@ -223,6 +251,10 @@
       "biceps",
       "forearms"
     ],
+    "media": {
+      "gif": "3017.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms",
@@ -252,6 +284,10 @@
       "biceps",
       "forearms"
     ],
+    "media": {
+      "gif": "0180.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms",
@@ -283,6 +319,10 @@
       "biceps",
       "forearms"
     ],
+    "media": {
+      "gif": "0293.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms",
@@ -315,6 +355,10 @@
       "rhomboids",
       "rear deltoids"
     ],
+    "media": {
+      "gif": "2330.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "lats",
@@ -346,6 +390,10 @@
       "biceps",
       "forearms"
     ],
+    "media": {
+      "gif": "3293.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms",
@@ -375,6 +423,10 @@
       "biceps",
       "forearms"
     ],
+    "media": {
+      "gif": "0017.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms",
@@ -404,6 +456,10 @@
       "glutes",
       "hamstrings"
     ],
+    "media": {
+      "gif": "0489.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "glutes",
       "hamstrings",
@@ -433,6 +489,10 @@
       "triceps",
       "upper back"
     ],
+    "media": {
+      "gif": "0091.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "triceps",
@@ -461,6 +521,10 @@
     "secondary_muscles": [
       "traps"
     ],
+    "media": {
+      "gif": "0334.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "upper_back_traps"
@@ -488,6 +552,10 @@
       "triceps",
       "upper back"
     ],
+    "media": {
+      "gif": "0405.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "triceps",
@@ -517,6 +585,10 @@
       "traps",
       "triceps"
     ],
+    "media": {
+      "gif": "0178.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "triceps",
@@ -546,6 +618,10 @@
       "traps",
       "rhomboids"
     ],
+    "media": {
+      "gif": "0075.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "posterior_deltoids",
@@ -575,6 +651,10 @@
       "trapezius",
       "rhomboids"
     ],
+    "media": {
+      "gif": "2292.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "posterior_deltoids",
@@ -603,6 +683,10 @@
     "secondary_muscles": [
       "shoulders"
     ],
+    "media": {
+      "gif": "0095.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "upper_back_traps"
@@ -629,6 +713,10 @@
     "secondary_muscles": [
       "shoulders"
     ],
+    "media": {
+      "gif": "0406.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "upper_back_traps"
@@ -655,6 +743,10 @@
     "secondary_muscles": [
       "forearms"
     ],
+    "media": {
+      "gif": "0285.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms"
@@ -681,6 +773,10 @@
     "secondary_muscles": [
       "forearms"
     ],
+    "media": {
+      "gif": "0294.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms"
@@ -707,6 +803,10 @@
     "secondary_muscles": [
       "forearms"
     ],
+    "media": {
+      "gif": "0313.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms"
@@ -733,6 +833,10 @@
     "secondary_muscles": [
       "forearms"
     ],
+    "media": {
+      "gif": "0416.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms"
@@ -759,6 +863,10 @@
     "secondary_muscles": [
       "forearms"
     ],
+    "media": {
+      "gif": "0241.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "forearms",
       "triceps"
@@ -785,6 +893,10 @@
     "secondary_muscles": [
       "shoulders"
     ],
+    "media": {
+      "gif": "0351.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "triceps"
@@ -811,6 +923,10 @@
     "secondary_muscles": [
       "shoulders"
     ],
+    "media": {
+      "gif": "0430.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "triceps"
@@ -838,6 +954,10 @@
       "chest",
       "shoulders"
     ],
+    "media": {
+      "gif": "0283.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "anterior_lateral_deltoids",
       "chest",
@@ -867,6 +987,10 @@
       "biceps",
       "brachialis"
     ],
+    "media": {
+      "gif": "0126.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms"
@@ -894,6 +1018,10 @@
       "biceps",
       "brachialis"
     ],
+    "media": {
+      "gif": "0082.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms"
@@ -921,6 +1049,10 @@
       "biceps",
       "brachialis"
     ],
+    "media": {
+      "gif": "0247.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "biceps",
       "forearms"
@@ -947,6 +1079,10 @@
     "secondary_muscles": [
       "forearms"
     ],
+    "media": {
+      "gif": "0994.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "forearms"
     ],
@@ -972,6 +1108,10 @@
       "hip flexors",
       "lower back"
     ],
+    "media": {
+      "gif": "0001.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "adductors_hip_flexors",
@@ -1000,6 +1140,10 @@
     "secondary_muscles": [
       "obliques"
     ],
+    "media": {
+      "gif": "0002.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "obliques"
@@ -1026,6 +1170,10 @@
     "secondary_muscles": [
       "hip flexors"
     ],
+    "media": {
+      "gif": "0003.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "adductors_hip_flexors"
@@ -1052,6 +1200,10 @@
     "secondary_muscles": [
       "obliques"
     ],
+    "media": {
+      "gif": "0006.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "obliques"
@@ -1079,6 +1231,10 @@
       "obliques",
       "lower back"
     ],
+    "media": {
+      "gif": "0014.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "lower_back",
@@ -1108,6 +1264,10 @@
       "obliques",
       "glutes"
     ],
+    "media": {
+      "gif": "0979.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "glutes",
@@ -1137,6 +1297,10 @@
       "obliques",
       "shoulders"
     ],
+    "media": {
+      "gif": "3544.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "anterior_lateral_deltoids",
@@ -1165,6 +1329,10 @@
     "secondary_muscles": [
       "hip flexors"
     ],
+    "media": {
+      "gif": "0507.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "adductors_hip_flexors"
@@ -1191,6 +1359,10 @@
     "secondary_muscles": [
       "obliques"
     ],
+    "media": {
+      "gif": "0222.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "obliques"
@@ -1219,6 +1391,10 @@
       "triceps",
       "obliques"
     ],
+    "media": {
+      "gif": "0524.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "anterior_lateral_deltoids",
@@ -1252,6 +1428,10 @@
       "calves",
       "core"
     ],
+    "media": {
+      "gif": "0043.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "calves",
@@ -1286,6 +1466,10 @@
       "hamstrings",
       "calves"
     ],
+    "media": {
+      "gif": "1760.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1318,6 +1502,10 @@
       "hamstrings",
       "calves"
     ],
+    "media": {
+      "gif": "0413.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1350,6 +1538,10 @@
       "glutes",
       "calves"
     ],
+    "media": {
+      "gif": "0024.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1381,6 +1573,10 @@
       "hamstrings",
       "lower back"
     ],
+    "media": {
+      "gif": "1409.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "glutes",
       "hamstrings",
@@ -1410,6 +1606,10 @@
       "hamstrings",
       "lower back"
     ],
+    "media": {
+      "gif": "0032.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "glutes",
       "hamstrings",
@@ -1439,6 +1639,10 @@
       "hamstrings",
       "lower back"
     ],
+    "media": {
+      "gif": "0085.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "glutes",
       "hamstrings",
@@ -1468,6 +1672,10 @@
       "hamstrings",
       "lower back"
     ],
+    "media": {
+      "gif": "1459.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "glutes",
       "hamstrings",
@@ -1497,6 +1705,10 @@
       "glutes",
       "lower back"
     ],
+    "media": {
+      "gif": "0116.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "glutes",
       "hamstrings",
@@ -1527,6 +1739,10 @@
       "hamstrings",
       "calves"
     ],
+    "media": {
+      "gif": "0534.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1559,6 +1775,10 @@
       "hamstrings",
       "calves"
     ],
+    "media": {
+      "gif": "0514.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1590,6 +1810,10 @@
       "glutes",
       "hamstrings"
     ],
+    "media": {
+      "gif": "0597.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "adductors_hip_flexors",
       "glutes",
@@ -1619,6 +1843,10 @@
       "glutes",
       "quadriceps"
     ],
+    "media": {
+      "gif": "0710.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "adductors_hip_flexors",
       "glutes",
@@ -1648,6 +1876,10 @@
       "glutes",
       "quadriceps"
     ],
+    "media": {
+      "gif": "0168.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "adductors_hip_flexors",
       "glutes",
@@ -1677,6 +1909,10 @@
       "hamstrings",
       "glutes"
     ],
+    "media": {
+      "gif": "0598.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "adductors_hip_flexors",
       "glutes",
@@ -1706,6 +1942,10 @@
       "obliques",
       "glutes"
     ],
+    "media": {
+      "gif": "1775.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "adductors_hip_flexors",
       "glutes",
@@ -1735,6 +1975,10 @@
       "ankles",
       "feet"
     ],
+    "media": {
+      "gif": "1373.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves"
     ],
@@ -1760,6 +2004,10 @@
       "hamstrings",
       "glutes"
     ],
+    "media": {
+      "gif": "1372.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1789,6 +2037,10 @@
       "hamstrings",
       "glutes"
     ],
+    "media": {
+      "gif": "1375.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1817,6 +2069,10 @@
     "secondary_muscles": [
       "ankles"
     ],
+    "media": {
+      "gif": "0409.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves"
     ],
@@ -1841,6 +2097,10 @@
     "secondary_muscles": [
       "ankles"
     ],
+    "media": {
+      "gif": "0417.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves"
     ],
@@ -1866,6 +2126,10 @@
       "hamstrings",
       "glutes"
     ],
+    "media": {
+      "gif": "1383.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1895,6 +2159,10 @@
       "trapezius",
       "sternocleidomastoid"
     ],
+    "media": {
+      "gif": "1403.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "neck",
       "upper_back_traps"
@@ -1922,6 +2190,10 @@
       "trapezius",
       "sternocleidomastoid"
     ],
+    "media": {
+      "gif": "0716.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "neck",
       "upper_back_traps"
@@ -1950,6 +2222,10 @@
       "hamstrings",
       "calves"
     ],
+    "media": {
+      "gif": "1008.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -1982,6 +2258,10 @@
       "hamstrings",
       "calves"
     ],
+    "media": {
+      "gif": "3769.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -2014,6 +2294,10 @@
       "hamstrings",
       "glutes"
     ],
+    "media": {
+      "gif": "0020.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "calves",
       "glutes",
@@ -2046,6 +2330,10 @@
       "chest",
       "core"
     ],
+    "media": {
+      "gif": "0471.gif",
+      "attribution": "© Gym visual — https://gymvisual.com/"
+    },
     "canonical_zones": [
       "abs",
       "anterior_lateral_deltoids",

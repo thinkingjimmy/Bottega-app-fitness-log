@@ -1,42 +1,49 @@
 # 🏋️ Fitness Log
 
-Fitness Log separates planned work from completed training. Use the App's chat to record rows; open the read-only “应用” surface to search a 72-exercise offline catalog and inspect a front/back muscle heatmap. “数据” remains the source of truth.
+Tell the App what you trained. It writes the sets down, then shows you which muscles you have actually been hitting — and which ones you have been quietly skipping.
 
-## Data contract
+*[中文版](README.zh-CN.md)*
 
-Every new row uses `date`, `exercise`, `exercise_id`, `status`, `sets`, and `weight`. `status` is `planned`, `completed`, or `unknown`; progress charts and the heatmap count only completed rows with a known catalog id. Seed `sample-*` rows use `status=unknown`, and the heatmap also excludes their reserved id prefix defensively.
+## What you get
 
-Existing instances are upgraded by the generic `migrations/base.json` contract: missing v2 columns are appended, legacy rows receive `status=unknown`, and `exercise_id` is filled only for an exact unique catalog name or alias. Existing values are never overwritten; a conflicting column type stops with export/recovery guidance before any write.
+**A muscle heatmap that answers one question: what am I neglecting?**
+Front and back, male or female body, over the last 7 / 30 / 90 days or all time. The more completed sets a region has absorbed, the deeper it burns. Click any muscle to see exactly which exercises got it there.
 
-The heatmap scores sets, not weight: target zone ×1.0, muscle group ×0.65, and each secondary zone ×0.35. Duplicate zones within one exercise take the highest weight. Display intensity is `1 - exp(-score / 12)`. This is a visualization scale, not training or medical advice. Excluded rows remain visible as diagnostics.
+**A 72-exercise catalog that works offline.**
+Search by name, alias, muscle, or equipment; filter by body part. Every exercise opens with a 180×180 animated demo, the muscles it targets, and step-by-step instructions.
 
-## Offline exercise and anatomy data
+**Plans and completed workouts stay separate.**
+Say "tomorrow I'll squat 5×5" and it is logged as a plan. Say "did it" and that same row is marked complete — no duplicate. Only completed sets ever reach the heatmap, so the picture never flatters you.
 
-The catalog is generated from [`hasaneyldrm/exercises-dataset`](https://github.com/hasaneyldrm/exercises-dataset) at commit `7455efae41b330c265e7cd4b78dfa848e7ce5ebd`. Metadata and instructions are distributed under its MIT license, included in `gui/data/exercises-dataset.LICENSE.txt`.
+**It speaks your language.**
+The interface follows the app's language — English, 简体中文, 日本語, Français, Español. Exercise instructions are available in English and Chinese.
 
-The front/back muscle map is generated from [`HichamELBSI/react-native-body-highlighter`](https://github.com/HichamELBSI/react-native-body-highlighter) at commit `15df9e2dbc621450001960bed5a30e6a75357faa`, distributed under its MIT license, included in `gui/data/body-highlighter.LICENSE.txt`. Only the SVG path data is vendored — no React Native runtime, screenshots, or other upstream assets.
+**Nothing leaves your machine.**
+The catalog, body map, and animations are all bundled. The page makes no network requests at all.
 
-No upstream images, GIFs, or other Gym visual media are included. The GUI makes no runtime network requests and reads Base only through the token-bound, read-only `/_api/base` gateway.
+## How to use it
 
-## Use it
+1. Open **Use chat** and describe a plan, or a workout you have finished.
+2. Confirm a plan as done and the App patches that row instead of inserting a new one.
+3. Open **应用** for the catalog and heatmap; open **数据** to check or correct any row.
+4. If the App cannot match what you said to a catalog exercise, it leaves the id blank rather than guessing.
 
-1. Open Use chat and describe a plan or an explicitly completed workout.
-2. Confirming a plan as completed patches that row instead of inserting a duplicate.
-3. Open “应用” for the catalog and heatmap; use “数据” to inspect or correct rows.
-4. Unknown actions keep an empty `exercise_id`; the Agent must never guess.
+## How the heatmap counts
+
+It counts **sets, not weight**, and only from workouts marked complete. An exercise's main target region gets full credit, the synergist group a bit less, and each secondary region less again; a region never gets counted twice for one exercise. The displayed intensity is a visualization scale, not a training prescription — this App tracks coverage, it does not coach.
+
+## Credits
+
+Exercise data, instructions, and translations come from [`hasaneyldrm/exercises-dataset`](https://github.com/hasaneyldrm/exercises-dataset) (MIT). The anatomical body map comes from [`HichamELBSI/react-native-body-highlighter`](https://github.com/HichamELBSI/react-native-body-highlighter) (MIT).
+
+The exercise animations are **© Gym visual — https://gymvisual.com/**, redistributed at 180×180 under a separate licence and shown with that attribution wherever they appear. They are not covered by the MIT licences above; see `gui/data/gym-visual.NOTICE.md`. If you want to reuse them, get your own licence from Gym visual.
+
+App code is MIT. Every upstream licence text, pinned commit, and content hash ships in `gui/data/`.
 
 ## Requirements
 
-None. The App uses AI Chat's built-in Base tools and read-only GUI gateway.
+None. The App uses AI Chat's built-in Base tools and its read-only GUI gateway.
 
-## Package map
+---
 
-- `app.json`: Base App manifest.
-- `data/base.json`: v2 six-column seed and completed-only progress views.
-- `migrations/base.json`: generic, idempotent live Base upgrade descriptor.
-- `gui/`: fixed offline GUI Surface entry, scripts, and pinned catalog + anatomy data.
-- `.agents/skills/workout-entry/SKILL.md`: planned/completed recording protocol.
-
-## License
-
-App code: MIT. Both upstream projects are MIT; their full license texts, pinned commits, and the media exception are preserved in `gui/data/*.LICENSE.txt` and `gui/data/*source*.json`.
+*Architecture notes live next to the code: [`gui/README.md`](gui/README.md) for the surface, [`gui/scripts/README.md`](gui/scripts/README.md) for the modules, [`gui/data/README.md`](gui/data/README.md) for the generated data and its provenance.*

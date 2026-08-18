@@ -1,70 +1,172 @@
 [
   {
     "id": "chest",
-    "label": "胸部"
+    "labels": {
+      "zh-CN": "胸部",
+      "en": "Chest",
+      "ja": "胸",
+      "fr": "Pectoraux",
+      "es": "Pecho"
+    }
   },
   {
     "id": "upper_back_traps",
-    "label": "斜方肌与上背"
+    "labels": {
+      "zh-CN": "斜方肌与上背",
+      "en": "Traps & upper back",
+      "ja": "僧帽筋・上背部",
+      "fr": "Trapèzes et haut du dos",
+      "es": "Trapecios y espalda alta"
+    }
   },
   {
     "id": "lats",
-    "label": "背阔肌"
+    "labels": {
+      "zh-CN": "背阔肌",
+      "en": "Lats",
+      "ja": "広背筋",
+      "fr": "Grand dorsal",
+      "es": "Dorsal ancho"
+    }
   },
   {
     "id": "lower_back",
-    "label": "下背"
+    "labels": {
+      "zh-CN": "下背",
+      "en": "Lower back",
+      "ja": "腰部",
+      "fr": "Bas du dos",
+      "es": "Zona lumbar"
+    }
   },
   {
     "id": "anterior_lateral_deltoids",
-    "label": "三角肌前束与中束"
+    "labels": {
+      "zh-CN": "三角肌前束与中束",
+      "en": "Front & side delts",
+      "ja": "三角筋前部・中部",
+      "fr": "Deltoïdes antérieurs et latéraux",
+      "es": "Deltoides anterior y lateral"
+    }
   },
   {
     "id": "posterior_deltoids",
-    "label": "三角肌后束"
+    "labels": {
+      "zh-CN": "三角肌后束",
+      "en": "Rear delts",
+      "ja": "三角筋後部",
+      "fr": "Deltoïdes postérieurs",
+      "es": "Deltoides posterior"
+    }
   },
   {
     "id": "biceps",
-    "label": "肱二头肌"
+    "labels": {
+      "zh-CN": "肱二头肌",
+      "en": "Biceps",
+      "ja": "上腕二頭筋",
+      "fr": "Biceps",
+      "es": "Bíceps"
+    }
   },
   {
     "id": "triceps",
-    "label": "肱三头肌"
+    "labels": {
+      "zh-CN": "肱三头肌",
+      "en": "Triceps",
+      "ja": "上腕三頭筋",
+      "fr": "Triceps",
+      "es": "Tríceps"
+    }
   },
   {
     "id": "forearms",
-    "label": "前臂"
+    "labels": {
+      "zh-CN": "前臂",
+      "en": "Forearms",
+      "ja": "前腕",
+      "fr": "Avant-bras",
+      "es": "Antebrazos"
+    }
   },
   {
     "id": "abs",
-    "label": "腹直肌"
+    "labels": {
+      "zh-CN": "腹直肌",
+      "en": "Abs",
+      "ja": "腹直筋",
+      "fr": "Abdominaux",
+      "es": "Abdominales"
+    }
   },
   {
     "id": "obliques",
-    "label": "腹斜肌"
+    "labels": {
+      "zh-CN": "腹斜肌",
+      "en": "Obliques",
+      "ja": "腹斜筋",
+      "fr": "Obliques",
+      "es": "Oblicuos"
+    }
   },
   {
     "id": "glutes",
-    "label": "臀肌"
+    "labels": {
+      "zh-CN": "臀肌",
+      "en": "Glutes",
+      "ja": "臀筋",
+      "fr": "Fessiers",
+      "es": "Glúteos"
+    }
   },
   {
     "id": "quadriceps",
-    "label": "股四头肌"
+    "labels": {
+      "zh-CN": "股四头肌",
+      "en": "Quadriceps",
+      "ja": "大腿四頭筋",
+      "fr": "Quadriceps",
+      "es": "Cuádriceps"
+    }
   },
   {
     "id": "hamstrings",
-    "label": "腘绳肌"
+    "labels": {
+      "zh-CN": "腘绳肌",
+      "en": "Hamstrings",
+      "ja": "ハムストリング",
+      "fr": "Ischio-jambiers",
+      "es": "Isquiotibiales"
+    }
   },
   {
     "id": "calves",
-    "label": "小腿"
+    "labels": {
+      "zh-CN": "小腿",
+      "en": "Calves",
+      "ja": "ふくらはぎ",
+      "fr": "Mollets",
+      "es": "Pantorrillas"
+    }
   },
   {
     "id": "adductors_hip_flexors",
-    "label": "内收肌与髋屈肌"
+    "labels": {
+      "zh-CN": "内收肌与髋屈肌",
+      "en": "Adductors & hip flexors",
+      "ja": "内転筋・腸腰筋",
+      "fr": "Adducteurs et fléchisseurs de hanche",
+      "es": "Aductores y flexores de cadera"
+    }
   },
   {
     "id": "neck",
-    "label": "颈部"
+    "labels": {
+      "zh-CN": "颈部",
+      "en": "Neck",
+      "ja": "首",
+      "fr": "Cou",
+      "es": "Cuello"
+    }
   }
 ]
