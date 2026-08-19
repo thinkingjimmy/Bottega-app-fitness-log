@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 FitnessI18n/BaseApi/Catalog/MuscleStats/PlanBuilder/PlanSubmission、index DOM 与本地 JSON/GIF
- * [OUTPUT]: 编排语言、人体热力图/目录、原子 Base 快照，以及可访问的多动作 planned batch dialog 与 unknown-outcome 恢复
+ * [OUTPUT]: 编排语言、人体热力图/目录、原子 Base 快照、常驻可行动的写权限说明，以及可访问的多动作 planned batch dialog 与 unknown-outcome 恢复
  * [POS]: gui/scripts 的浏览器组合根；零外网，Base 只经 BaseApi，fitness 语义只经 PlanBuilder
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
@@ -153,10 +153,13 @@
       : state.t("status.ok", { n: snapshot.rows.length });
     const planIssues = global.FitnessPlanBuilder.validatePlanSchema(snapshot.meta);
     const canInsert = snapshot.meta.capabilities && snapshot.meta.capabilities.rowInsert;
-    $("#create-plan").disabled = !canInsert || planIssues.length > 0;
-    $("#create-plan").title = !canInsert
+    const disabledReason = !canInsert
       ? state.t("plan.disabled.readonly")
       : planIssues.length ? state.t("plan.disabled.schema") : "";
+    $("#create-plan").disabled = Boolean(disabledReason);
+    $("#create-plan").removeAttribute("title");
+    $("#plan-disabled-reason").hidden = !disabledReason;
+    $("#plan-disabled-reason").textContent = disabledReason;
     calculate();
   }
 
