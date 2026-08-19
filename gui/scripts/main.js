@@ -314,7 +314,7 @@
       return;
     }
     $("#plan-dialog").close();
-    state.planTrigger && state.planTrigger.focus();
+    state.planTrigger?.focus();
   }
 
   async function submitPlan(event) {
@@ -348,7 +348,9 @@
       const item = /^items\.(\d+)\.(.+)$/.exec(field || "");
       if (item) {
         const row = $("#plan-list").children[Number(item[1])];
-        row && row.querySelector(item[2] === "exerciseId" ? "select" : `.plan-${item[2]}`)?.focus();
+        if (row) {
+          row.querySelector(item[2] === "exerciseId" ? "select" : `.plan-${item[2]}`)?.focus();
+        }
       }
     }
   }
@@ -367,7 +369,7 @@
         date: attempt.frozen.date, exercises: summary.exercises, sets: summary.sets,
       });
       $("#plan-dialog").close();
-      state.planTrigger && state.planTrigger.focus();
+      state.planTrigger?.focus();
       state.planAttempt = null;
       return;
     }
