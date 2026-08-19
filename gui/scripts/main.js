@@ -226,6 +226,9 @@
       event.preventDefault();
       closePlan();
     });
+    /* iframe 刻意没有 allow-forms：Chromium 会在原生 form submit 前拦截，
+       因而保存按钮必须直接进入 JS command，再由 fetch 完成同源写入。 */
+    $("#plan-save").addEventListener("click", submitPlan);
     $("#plan-form").addEventListener("submit", submitPlan);
     $("#plan-form").addEventListener("input", () => {
       if (state.planAttempt && ["draft", "editable-error", "retry-ready"].includes(state.planAttempt.state)) {
@@ -239,6 +242,12 @@
   function openPlan(event) {
     if (!state.snapshot || !state.client || $("#create-plan").disabled) return;
     state.planTrigger = event.currentTarget;
+    /* frozen ids 是 unknown-outcome 的唯一证据；重开只能恢复，不能把它当草稿清空。 */
+    if (state.planAttempt) {
+      renderFrozenPlan(state.planAttempt);
+      renderPlanState(state.planAttempt);
+      return;
+    }
     state.planAttempt = null;
     state.planController.clear();
     $("#plan-date").value = global.FitnessPlanBuilder.localDate(new Date());
@@ -296,7 +305,10 @@
   }
 
   function closePlan() {
-    if (state.planAttempt && ["submitting", "reconciling", "committed-refreshing"].includes(state.planAttempt.state)) {
+    if (state.planAttempt && [
+      "submitting", "reconciling", "committed-refreshing",
+      "hard-conflict", "committed-refresh-failed",
+    ].includes(state.planAttempt.state)) {
       $("#plan-error").textContent = state.t("plan.busyClose");
       state.planController.save(state.planAttempt);
       return;
