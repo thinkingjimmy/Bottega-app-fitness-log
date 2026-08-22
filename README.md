@@ -16,7 +16,7 @@ Search by name, alias, muscle, or equipment; filter by body part. Every exercise
 Say "tomorrow I'll squat 5×5" and it is logged as a plan. Say "did it" and that same row is marked complete — no duplicate. Only completed sets ever reach the heatmap, so the picture never flatters you.
 
 **It speaks your language.**
-The interface follows the app's language — English, 简体中文, 日本語, Français, Español. Exercise instructions are available in English and Chinese.
+The interface follows the app's language — English, 简体中文, 日本語, Français, Español, and it never mixes two languages in one screen: equipment, muscles, and body parts are all translated, and exercise instructions are shown as numbered steps in your language (Chinese where available, English otherwise). The only untranslated text is the three credit lines in the footer — those are licence requirements.
 
 **Nothing leaves your machine.**
 The catalog, body map, and animations are all bundled. The page makes no network requests at all.

@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 FitnessI18n/BaseApi/Catalog/MuscleStats/PlanBuilder/PlanSubmission、index DOM 与本地 JSON/GIF
- * [OUTPUT]: 编排语言、人体热力图/目录、原子 Base 快照、常驻可行动的写权限说明，以及可访问的多动作 planned batch dialog 与 unknown-outcome 恢复
+ * [INPUT]: 依赖 FitnessI18n/BaseApi/Catalog/MuscleStats/PlanBuilder/PlanSubmission、index DOM 与本地 JSON/GIF（含 terms.json 五语言词表）
+ * [OUTPUT]: 编排语言、人体热力图/目录、原子 Base 快照、常驻可行动的写权限说明，以及可访问的多动作 planned batch dialog 与 unknown-outcome 恢复；界面词汇全本地化，不与上游英文并置
  * [POS]: gui/scripts 的浏览器组合根；零外网，Base 只经 BaseApi，fitness 语义只经 PlanBuilder
  * [PROTOCOL]: 变更时更新此头部，然后检查 README.md
  */
@@ -11,7 +11,7 @@
   "use strict";
   const $ = (selector) => document.querySelector(selector);
   const state = {
-    exercises: [], regions: [], labels: new Map(), bodyMap: null,
+    exercises: [], regions: [], labels: new Map(), bodyMap: null, terms: null,
     gender: "male", snapshot: null, analysis: null, selectedMuscle: "", visible: 24,
     locale: "en", t: (key) => key,
     client: null, planController: null, planAttempt: null, planTrigger: null,
@@ -25,12 +25,14 @@
     bindControls();
     try {
       if (!fragment.token) throw new global.FitnessBaseApi.BaseApiError(401, state.t("error.401"));
-      const [exercises, regions, bodyMap] = await Promise.all([
-        loadJson("./data/exercises.json"), loadJson("./data/muscle-regions.json"), loadJson("./data/body-map.json"),
+      const [exercises, regions, bodyMap, termTable] = await Promise.all([
+        loadJson("./data/exercises.json"), loadJson("./data/muscle-regions.json"),
+        loadJson("./data/body-map.json"), loadJson("./data/terms.json"),
       ]);
       state.exercises = exercises;
       state.regions = regions;
       state.bodyMap = bodyMap;
+      state.terms = termTable;
       applyLabels();
       renderBodyMaps();
       populateFilters();
@@ -93,6 +95,31 @@
     state.labels = new Map(state.regions.map((region) => [region.id, region.labels[state.locale] || region.labels.en]));
     $("#catalog-eyebrow").textContent = state.t("catalog.eyebrow", { n: state.exercises.length });
     $("#media-credit").textContent = state.exercises[0].media.attribution;
+  }
+
+  /* ------------------------------------------------------------------ 词表
+     上游字段只有英文；terms.json 是与 muscle-regions.json 同族的五语言对照表，
+     覆盖 bodyParts / equipment / muscles 三个命名空间。查不到就原样回落——
+     宁可漏出一个英文词，也不能因为词表缺一条让整页空白。 */
+  function term(namespace, value) {
+    const table = state.terms && state.terms[namespace];
+    const entry = table && table[value];
+    return (entry && (entry[state.locale] || entry.en)) || value;
+  }
+
+  /* 界面全本地化之后，用户搜的是"杠铃"、"胸大肌"，不再是 barbell、pectorals；
+     上游英文原名仍留在目录自己的语料里，两边都能命中。 */
+  function localizeExercise(item) {
+    return [
+      term("bodyParts", item.body_part), term("equipment", item.equipment),
+      term("muscles", item.target), term("muscles", item.muscle_group),
+      ...(item.secondary_muscles || []).map((muscle) => term("muscles", muscle)),
+      ...item.canonical_zones.map((zone) => state.labels.get(zone) || zone),
+    ];
+  }
+
+  function termList(values, namespace) {
+    return list(values.map((value) => term(namespace, value)));
   }
 
   /* --------------------------------------------------------------- body map
@@ -198,7 +225,7 @@
     const uniqueRows = new Set(items.map((item) => item.rowId)).size;
     const rows = items.length
       ? `<ol>${items.slice(0, 8).map((item) =>
-          `<li>${escapeHtml(label(exerciseName(item.exerciseId)))}${escapeHtml(state.t("map.setsUnit", { n: item.sets }))}, ${escapeHtml(state.t("map.contribution", { n: item.points.toFixed(1) }))}</li>`
+          `<li><span>${escapeHtml(exerciseName(item.exerciseId))}</span><em>${escapeHtml(state.t("map.setsUnit", { n: item.sets }))}${escapeHtml(state.t("punct.pair"))}${escapeHtml(state.t("map.contribution", { n: item.points.toFixed(1) }))}</em></li>`
         ).join("")}</ol>`
       : `<p>${escapeHtml(state.t("map.noRows"))}</p>`;
     $("#muscle-detail").innerHTML =
@@ -256,7 +283,7 @@
     $("#plan-date").value = global.FitnessPlanBuilder.localDate(new Date());
     $("#plan-list").replaceChildren();
     addPlanRow();
-    $("#plan-error").textContent = "";
+    setPlanState("", "");
     $("#plan-form").setAttribute("aria-busy", "false");
     setPlanLocked(false);
     $("#plan-dialog").showModal();
@@ -286,14 +313,47 @@
     row.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
       node.setAttribute("placeholder", state.t(node.getAttribute("data-i18n-placeholder")));
     });
+    /* 列头只写一次，每行的可访问名靠 aria-label 补回来——克隆节点不走 applyLocale。 */
+    row.querySelectorAll("[data-i18n-aria]").forEach((node) => {
+      node.setAttribute("aria-label", state.t(node.getAttribute("data-i18n-aria")));
+    });
     if (values) {
       row.querySelector(".plan-sets").value = String(values.sets);
       row.querySelector(".plan-weight").value = String(values.weight);
     }
     row.querySelector(".plan-remove").addEventListener("click", () => {
-      if ($("#plan-list").children.length > 1) row.remove();
+      if ($("#plan-list").children.length <= 1) return;
+      row.remove();
+      renumberPlanRows();
     });
     $("#plan-list").append(row);
+    renumberPlanRows();
+  }
+
+  function renumberPlanRows() {
+    [...$("#plan-list").children].forEach((row, index) => {
+      row.querySelector(".plan-no").textContent = String(index + 1);
+    });
+  }
+
+  /* 状态位常驻同一个位置：只换语气与措辞，不再让弹窗因为出现/消失而跳动。
+     detail 一律是冻结批次的摘要——结果不确定时，那是用户手上唯一的凭证。 */
+  function setPlanState(tone, message, detail) {
+    const node = $("#plan-state");
+    node.dataset.tone = message ? tone || "info" : "";
+    node.textContent = message || "";
+    if (!message || !detail) return;
+    const summary = document.createElement("em");
+    summary.textContent = detail;
+    node.append(summary);
+  }
+
+  function frozenSummary(attempt) {
+    return state.t("plan.frozenSummary", {
+      date: attempt.frozen.date,
+      exercises: attempt.frozen.summary.exercises,
+      sets: attempt.frozen.summary.sets,
+    });
   }
 
   function renderFrozenPlan(attempt) {
@@ -302,7 +362,6 @@
     attempt.frozen.rows.forEach((row) =>
       addPlanRow(row.values.exercise_id, row.values)
     );
-    $("#plan-error").textContent = "";
     if (!$("#plan-dialog").open) $("#plan-dialog").showModal();
     $("#plan-date").focus();
   }
@@ -312,7 +371,7 @@
       "submitting", "reconciling", "committed-refreshing",
       "hard-conflict", "committed-refresh-failed",
     ].includes(state.planAttempt.state)) {
-      $("#plan-error").textContent = state.t("plan.busyClose");
+      setPlanState("busy", state.t("plan.busyClose"), frozenSummary(state.planAttempt));
       state.planController.save(state.planAttempt);
       return;
     }
@@ -345,7 +404,7 @@
       }
       await state.planController.submit(state.planAttempt);
     } catch (error) {
-      $("#plan-error").textContent = planError(error);
+      setPlanState("error", planError(error));
       const field = error && error.field;
       if (field === "date") $("#plan-date").focus();
       const item = /^items\.(\d+)\.(.+)$/.exec(field || "");
@@ -366,6 +425,7 @@
     setPlanLocked(locked);
     $("#plan-save").textContent = state.t(`plan.state.${attempt.state}`);
     if (attempt.state === "done") {
+      setPlanState("", "");
       publish(attempt.snapshot);
       const summary = attempt.frozen.summary;
       $("#plan-announcement").textContent = state.t("plan.success", {
@@ -376,14 +436,17 @@
       state.planAttempt = null;
       return;
     }
+    const summary = frozenSummary(attempt);
     if (attempt.state === "committed-refresh-failed") {
-      $("#plan-error").textContent = state.t("plan.savedRefreshFailed");
+      setPlanState("done", state.t("plan.savedRefreshFailed"), summary);
     } else if (attempt.state === "hard-conflict") {
-      $("#plan-error").textContent = state.t("plan.hardConflict");
+      setPlanState("warn", state.t("plan.hardConflict"), summary);
     } else if (attempt.state === "retry-ready") {
-      $("#plan-error").textContent = state.t("plan.retryReady");
+      setPlanState("info", state.t("plan.retryReady"), summary);
     } else if (attempt.error) {
-      $("#plan-error").textContent = planError(attempt.error);
+      setPlanState("error", planError(attempt.error), summary);
+    } else if (busy) {
+      setPlanState("busy", state.t("plan.busyClose"), summary);
     }
   }
 
@@ -400,17 +463,24 @@
       : state.t(`plan.error.${code}`);
   }
 
+  /* 选项文案本地化，option value 仍是上游原文——筛选口径不因为翻译而漂移。
+     排序按显示文案走，否则中文界面里的顺序是照英文排的，读起来是乱的。 */
   function populateFilters() {
-    addOptions("#body-filter", unique(state.exercises.map((item) => item.body_part)).map(self));
+    addOptions("#body-filter", termEntries(state.exercises.map((item) => item.body_part), "bodyParts"));
     addOptions("#muscle-filter", state.regions.map((region) => [state.labels.get(region.id), region.id]));
-    addOptions("#equipment-filter", unique(state.exercises.map((item) => item.equipment)).map(self));
+    addOptions("#equipment-filter", termEntries(state.exercises.map((item) => item.equipment), "equipment"));
+  }
+
+  function termEntries(values, namespace) {
+    return [...new Set(values)]
+      .map((value) => [term(namespace, value), value])
+      .sort(([left], [right]) => left.localeCompare(right, state.locale));
   }
 
   function addOptions(selector, entries) {
     const select = $(selector);
     entries.forEach(([label, value]) => select.add(new Option(label, value)));
   }
-  function self(value) { return [value, value]; }
 
   /* 别名是中文人工命名，只有中文界面该用它；其余语言用上游英文原名。
      标点同理：全角冒号顿号在法/西/英下是排版错误。 */
@@ -429,24 +499,37 @@
     const filtered = global.FitnessCatalog.filterExercises(state.exercises, {
       query: $("#query").value, bodyPart: $("#body-filter").value,
       muscle: $("#muscle-filter").value, equipment: $("#equipment-filter").value,
-    });
+    }, localizeExercise);
     const visible = filtered.slice(0, state.visible);
     $("#result-count").textContent = state.t("catalog.count", { n: filtered.length });
+    $("#result-showing").textContent = visible.length < filtered.length
+      ? state.t("catalog.showing", { n: visible.length })
+      : state.t("catalog.grouped");
     $("#more").hidden = visible.length >= filtered.length;
-    $("#catalog").innerHTML = visible.length ? global.FitnessCatalog.groupByBodyPart(visible).map(([group, items]) =>
-      `<section class="catalog-group"><h3>${escapeHtml(group)}</h3><div class="cards">${items.map(cardHtml).join("")}</div></section>`
-    ).join("") : `<p class="empty">${escapeHtml(state.t("catalog.empty"))}</p>`;
+    /* 分组标题上的数字是"这个筛选下这一组共有多少"，不是"这一屏渲染了几条"——
+       否则翻页时同一个分组的计数会跟着变，读起来像数据在跳。 */
+    const totals = new Map();
+    filtered.forEach((item) => totals.set(item.body_part, (totals.get(item.body_part) || 0) + 1));
+    $("#catalog").innerHTML = visible.length
+      ? global.FitnessCatalog.groupByBodyPart(visible, (key) => term("bodyParts", key)).map(([group, items]) =>
+        `<section class="catalog-group"><h3>${escapeHtml(term("bodyParts", group))}<b>${totals.get(group)}</b></h3>` +
+        `<div class="cards">${items.map(cardHtml).join("")}</div></section>`
+      ).join("") : `<p class="empty">${escapeHtml(state.t("catalog.empty"))}</p>`;
     document.querySelectorAll(".card").forEach((button) => button.addEventListener("click", () => openExercise(button.dataset.exerciseId)));
   }
 
+  /* 中文界面下不再并置上游英文原名：别名已经是权威显示名，两行并排只是噪音。
+     器械单拎成一枚标签靠右，主要/次要肌肉合成一行——一条索引读完就知道练什么。 */
   function cardHtml(item) {
-    const secondary = item.secondary_muscles.length ? list(item.secondary_muscles) : state.t("card.none");
-    const title = displayName(item);
-    const subtitle = title === item.name ? "" : `<span>${escapeHtml(item.name)}</span>`;
+    const secondary = item.secondary_muscles.length
+      ? termList(item.secondary_muscles, "muscles")
+      : state.t("card.none");
     return `<button class="card" type="button" data-exercise-id="${item.id}">` +
-      `<strong>${escapeHtml(title)}</strong>${subtitle}` +
-      `<span>${escapeHtml(label(state.t("card.target")))}${escapeHtml(item.target)} · ${escapeHtml(label(state.t("card.equipment")))}${escapeHtml(item.equipment)}</span>` +
-      `<span>${escapeHtml(label(state.t("card.secondary")))}${escapeHtml(secondary)}</span></button>`;
+      `<strong>${escapeHtml(displayName(item))}</strong>` +
+      `<span class="card-kit">${escapeHtml(term("equipment", item.equipment))}</span>` +
+      `<span class="card-meta">${escapeHtml(label(state.t("card.target")))}` +
+      `<b>${escapeHtml(term("muscles", item.target))}</b> · ` +
+      `${escapeHtml(label(state.t("card.secondary")))}${escapeHtml(secondary)}</span></button>`;
   }
 
   /* 演示动图与它的署名同生共死：两者都来自 exercises.json 的同一个 media 块，
@@ -456,24 +539,39 @@
     if (!item) return;
     const title = displayName(item);
     const zones = list(item.canonical_zones.map((zone) => state.labels.get(zone) || zone));
-    const localized = state.locale === "zh-CN" ? item.instructions.zh : item.instructions.en;
-    const original = state.locale === "zh-CN"
-      ? `<h3>${escapeHtml(state.t("dialog.english"))}</h3><p lang="en">${escapeHtml(item.instructions.en)}</p>`
-      : "";
+    const secondary = item.secondary_muscles.length
+      ? termList(item.secondary_muscles, "muscles")
+      : state.t("card.none");
+    const instructions = state.locale === "zh-CN" ? item.instructions.zh : item.instructions.en;
+    $("#exercise-title").textContent = title;
     $("#exercise-detail").innerHTML =
-      `<figure class="exercise-media">` +
-        `<img src="./media/${encodeURIComponent(item.media.gif)}" width="180" height="180" ` +
-          `alt="${escapeHtml(state.t("media.alt", { name: title }))}" loading="lazy">` +
-        `<figcaption>${escapeHtml(item.media.attribution)}</figcaption>` +
-      `</figure>` +
-      `<h2>${escapeHtml(title)}</h2>${title === item.name ? "" : `<p class="subtitle">${escapeHtml(item.name)}</p>`}` +
-      `<dl><dt>${escapeHtml(state.t("card.equipment"))}</dt><dd>${escapeHtml(item.equipment)}</dd>` +
-      `<dt>${escapeHtml(state.t("card.target"))}</dt><dd>${escapeHtml(item.target)}</dd>` +
-      `<dt>${escapeHtml(state.t("dialog.group"))}</dt><dd>${escapeHtml(item.muscle_group)}</dd>` +
-      `<dt>${escapeHtml(state.t("card.secondary"))}</dt><dd>${escapeHtml(list(item.secondary_muscles) || state.t("card.none"))}</dd>` +
-      `<dt>${escapeHtml(state.t("dialog.zones"))}</dt><dd>${escapeHtml(zones)}</dd></dl>` +
-      `<h3>${escapeHtml(state.t("dialog.howto"))}</h3><p>${escapeHtml(localized)}</p>${original}`;
+      `<div class="detail-body">` +
+        `<dl class="facts">` +
+          `<dt>${escapeHtml(state.t("card.equipment"))}</dt><dd>${escapeHtml(term("equipment", item.equipment))}</dd>` +
+          `<dt>${escapeHtml(state.t("card.target"))}</dt><dd><b>${escapeHtml(term("muscles", item.target))}</b></dd>` +
+          `<dt>${escapeHtml(state.t("dialog.group"))}</dt><dd>${escapeHtml(term("muscles", item.muscle_group))}</dd>` +
+          `<dt>${escapeHtml(state.t("card.secondary"))}</dt><dd>${escapeHtml(secondary)}</dd>` +
+          `<dt>${escapeHtml(state.t("dialog.zones"))}</dt><dd>${escapeHtml(zones)}</dd>` +
+        `</dl>` +
+        `<figure class="exercise-media">` +
+          `<img src="./media/${encodeURIComponent(item.media.gif)}" width="180" height="180" ` +
+            `alt="${escapeHtml(state.t("media.alt", { name: title }))}" loading="lazy">` +
+          `<figcaption>${escapeHtml(item.media.attribution)}</figcaption>` +
+        `</figure>` +
+      `</div>` +
+      `<div class="howto"><h3>${escapeHtml(state.t("dialog.howto"))}</h3>` +
+      `<ol class="steps">${splitSteps(instructions).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol></div>`;
     $("#exercise-dialog").showModal();
+  }
+
+  /* 上游把一整套动作说明糊成一段，中英文都是。按句末标点切开才读得动；
+     切不出多句就整段兜底——宁可退回原样，也不能把说明弄丢。 */
+  function splitSteps(text) {
+    const sentences = String(text || "")
+      .split(/(?<=[。．.!?！？])\s+/)
+      .map((sentence) => sentence.trim())
+      .filter(Boolean);
+    return sentences.length ? sentences : [String(text || "")];
   }
 
   function showError(error, stale) {
@@ -484,6 +582,5 @@
       `${key ? state.t(key) : error.message || state.t("error.generic")}${stale && state.snapshot ? state.t("error.stale") : ""}`;
   }
 
-  function unique(values) { return [...new Set(values)].sort((left, right) => left.localeCompare(right)); }
   function escapeHtml(value) { const node = document.createElement("span"); node.textContent = String(value); return node.innerHTML; }
 })(globalThis);
