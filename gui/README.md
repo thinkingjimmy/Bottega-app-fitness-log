@@ -4,14 +4,14 @@
 
 成员清单
 
-- index.html: 固定 GUI Surface 入口；索引式动作目录、人体 SVG 图版、动作详情、常驻计划禁用原因与列头式训练计划 dialog 的可访问骨架。
+- index.html: 固定 GUI Surface 入口；先加载产品 `/_sdk/base-api.js`，再挂健身域 adapter 与可访问页面骨架。
 - styles.css: 响应式、深浅主题、reduced-motion、焦点与 OKLCH 单调热度视觉系统；纸面报头/图版/点导线/索引行的「训练手册」版式，轮廓/装饰件/热区三层配色与演示动图版式。字体全部系统栈。
 - plan.css: 训练计划入口常驻原因、列头式行表与四档常驻状态位，以及 dialog 的 44px 触控、busy、窄窗与可访问反馈增量样式；通用视觉仍归 styles.css。
 - scripts/: 语言协商、Base 读写、动作检索、统计、plan builder/submission 与 DOM 编排，详见 scripts/README.md。
 - data/: 固定上游提交生成的动作目录、男女解剖几何、五语言分区标签、上游英文字段的五语言译名与供应链取证，详见 data/README.md。
 - media/: 72 张 180×180 演示动图，详见 media/README.md。
 
-依赖方向：`index.html → scripts/main.js → i18n + base-api + catalog + muscle-stats + plan-builder + plan-submission + local data/media`；任何模块都不得访问外网、preload 或 Node，Base mutation 只经同源 append-only API。
+依赖方向：`index.html → /_sdk/base-api.js → scripts/base-api.js → main.js`，main 再消费其余纯模块与本地 data/media；任何模块都不得访问外网、preload 或 Node，Base mutation 只经产品同源 SDK。
 
 五条硬约束：
 

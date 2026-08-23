@@ -1,11 +1,11 @@
 {
   "kind": "base",
-  "packageSchemaVersion": 1,
+  "packageSchemaVersion": 2,
   "name": "健身日志",
   "description": "区分计划与完成训练，浏览离线动作目录，并用只读人体热力图查看已完成组数覆盖。",
   "icon": "🏋️",
   "requirements": null,
   "gui": {
-    "baseAccess": "row-insert"
+    "capabilities": ["row-insert", "row-patch", "row-delete", "attachment-read"]
   }
 }

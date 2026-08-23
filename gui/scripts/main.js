@@ -427,6 +427,8 @@
     if (attempt.state === "done") {
       setPlanState("", "");
       publish(attempt.snapshot);
+      const viewId = attempt.snapshot.meta.activeViewId;
+      if (viewId) global.BottegaBase.hostAction({ type: "open-data-view", viewId });
       const summary = attempt.frozen.summary;
       $("#plan-announcement").textContent = state.t("plan.success", {
         date: attempt.frozen.date, exercises: summary.exercises, sets: summary.sets,
