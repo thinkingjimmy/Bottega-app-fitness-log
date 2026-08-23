@@ -6,6 +6,6 @@
   "icon": "🏋️",
   "requirements": null,
   "gui": {
-    "capabilities": ["row-insert", "row-patch", "row-delete", "attachment-read"]
+    "capabilities": ["row-insert"]
   }
 }
