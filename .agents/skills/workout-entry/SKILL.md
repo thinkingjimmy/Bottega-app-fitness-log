@@ -25,12 +25,12 @@ base-ops skill，本文只定义健身日志自己的约定。
 ## 动作 id 与命名归一
 
 进度图按 `exercise` 分组，命名漂移就会把同一个动作拆成两条线。写入前先
-`base_query`（`columns: ["exercise"]`）拿到库里已有的动作名：
+`read_base`（`columns: ["exercise"]`）拿到库里已有的动作名：
 
 - 用户说的是已有动作的别名（卧推 / 平板卧推 / bench press），一律沿用**库里已有的写法**。
 - 同时读取 `gui/data/exercises.json`；只有名称/人工 alias 唯一匹配时才写其 `id`。
 - 确实是目录外新动作才引入新名字，用最短的通用中文名，并让 `exercise_id` 留空。
-- 用户明确要求改名时，`base_query` 找出全部旧名行后逐行 `base_patch_rows` 改齐，不留半旧半新。
+- 用户明确要求改名时，`read_base` 找出全部旧名行后逐行 `base_patch_rows` 改齐，不留半旧半新。
 
 ## 录入协议
 
@@ -47,9 +47,9 @@ base-ops skill，本文只定义健身日志自己的约定。
 
 ## 改记录与查询
 
-- 改已有记录用 `base_patch_rows`（字段级 LWW）；先 `base_query` 定位行 id，不凭记忆猜。
+- 改已有记录用 `base_patch_rows`（字段级 LWW）；先 `read_base` 定位行 id，不凭记忆猜。
 - 「今天深蹲加到 85」这类追加重量，是 patch 当天那一行，不是新插一行。
-- 进展问题一律 `base_query`，只纳入 `status=completed`；row id 不是业务类型，
+- 进展问题一律 `read_base`，只纳入 `status=completed`；row id 不是业务类型，
   seed 默认 `unknown` 所以自然不统计。不要凭上下文回答。
 - legacy row 缺 status 时按 `unknown` 处理。用户确认后可 patch；不得批量伪造成 completed。
 - 完整导出用 `base_export_csv`，返回的是 artifact 元数据而不是内联 CSV 正文。
