@@ -1,0 +1,12 @@
+/**
+ * [INPUT]: Tailwind and the focused training-manual stylesheets
+ * [OUTPUT]: The host-compiled Fitness CSS entry
+ * [POS]: GUI stylesheet entry; visual rules live beside their components
+ * [PROTOCOL]: Update this header when the file changes, then check README.md
+ */
+@import "tailwindcss";
+@import "./components/styles/foundation.css";
+@import "./components/styles/manual.css";
+@import "./components/styles/dialogs.css";
+@import "./components/styles/responsive.css";
+@custom-variant dark (&:where(.dark, .dark *));

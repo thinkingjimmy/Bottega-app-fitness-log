@@ -1,0 +1,14 @@
+{
+  "aliases": {
+    "components": "@/components",
+    "lib": "@/lib",
+    "ui": "@/components/ui"
+  },
+  "components": [
+    "forms",
+    "overlays"
+  ],
+  "iconLibrary": "lucide",
+  "primitives": "base-ui",
+  "schemaVersion": 1
+}

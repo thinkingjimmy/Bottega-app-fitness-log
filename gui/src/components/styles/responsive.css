@@ -1,0 +1,174 @@
+/**
+ * [INPUT]: Host theme and semantic Fitness component classes
+ * [OUTPUT]: responsive styling for the training-manual interface
+ * [POS]: Fitness presentation stylesheet composed by src/styles.css
+ * [PROTOCOL]: Update this header when the file changes, then check README.md
+ */
+/* ═══════════════════════════ 断点 ═══════════════════════════
+   448px 是宿主侧栏的默认宽度（可拖 360–720），是真正要守住的那一档。 */
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .masthead {
+    align-items: flex-start;
+  }
+  .detail-body {
+    grid-template-columns: 1fr;
+  }
+  .exercise-media {
+    justify-items: start;
+  }
+}
+@media (max-width: 620px) {
+  .masthead {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .masthead h1 {
+    font-size: 23px;
+  }
+  .header-actions {
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .map-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filters .field:last-child {
+    grid-column: 1/-1;
+  }
+  .body {
+    max-height: 340px;
+  }
+  .plate-inner {
+    padding: 10px 10px 8px;
+  }
+  .plate-key {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .key-note {
+    display: none;
+  }
+  /* 器械右对齐会把中文动作名挤断——挪到第二行与肌肉并排 */
+  .card {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .card .card-kit {
+    order: 3;
+    grid-column: 1;
+    border: 1px solid var(--line);
+    padding: 3px 6px;
+    justify-self: start;
+  }
+  .card .card-meta {
+    order: 2;
+  }
+  .sheet-inner {
+    padding: 18px;
+  }
+  .sheet-head h2 {
+    font-size: 20px;
+  }
+}
+:root.dark {
+  --bg: oklch(18% 0.018 65);
+  --panel: oklch(22.5% 0.018 65);
+  --tint: oklch(26% 0.018 65);
+  --ink: oklch(94% 0.01 75);
+  --muted: oklch(72% 0.02 70);
+  --dim: oklch(60% 0.02 68);
+  --line: oklch(34% 0.025 65);
+  --rule: oklch(58% 0.025 65);
+  --accent: oklch(70% 0.17 40);
+  --accent-tint: oklch(30% 0.07 36);
+  --ok: oklch(72% 0.14 150);
+  --ok-tint: oklch(28% 0.06 150);
+  --neutral: oklch(32% 0.018 65);
+  --figure: oklch(26% 0.014 65);
+  --figure-deep: oklch(29% 0.015 65);
+  --figure-line: oklch(43% 0.02 65);
+  --zone-line: oklch(52% 0.022 65);
+  /* 浅色档的色阶是"越练越深"，直接搬到深色底上会变成"越练越暗"——热度反着读。
+     深色档必须自己一套：亮度随强度单调上升，灰度打印同样成立。 */
+  --h1c: oklch(45% 0.1 32);
+  --h2c: oklch(56% 0.15 30);
+  --h3c: oklch(68% 0.18 28);
+  --h4c: oklch(80% 0.17 45);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .plan-entry {
+    justify-items: stretch;
+  }
+  .plan-availability {
+    text-align: left;
+  }
+  /* 六列在侧栏塞不下：序号并进动作行，组数/重量各占一半，删除键独占一列 */
+  .plan-cols {
+    display: none;
+  }
+  .plan-row {
+    grid-template-columns: 22px minmax(0, 1fr) minmax(0, 1fr) 44px;
+    gap: 8px 10px;
+    padding: 12px 0;
+  }
+  .plan-no {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .plan-search-cell {
+    grid-row: 1;
+    grid-column: 2 / 4;
+  }
+  .plan-exercise-cell {
+    grid-row: 2;
+    grid-column: 2 / -1;
+  }
+  .plan-sets-cell {
+    grid-row: 3;
+    grid-column: 2 / 3;
+  }
+  .plan-weight-cell {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .plan-remove {
+    grid-row: 1;
+    grid-column: 4;
+  }
+  #plan-form {
+    padding: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #plan-dialog,
+  * {
+    scroll-behavior: auto !important;
+  }
+}

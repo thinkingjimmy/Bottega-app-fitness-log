@@ -46,4 +46,4 @@ GUI 会申请仅追加 Base 行的权限：只能新增 planned 记录，不能�
 
 ---
 
-*架构说明就放在代码旁边：界面看 [`gui/README.md`](gui/README.md)，模块看 [`gui/scripts/README.md`](gui/scripts/README.md)，生成数据与供应链取证看 [`gui/data/README.md`](gui/data/README.md)。*
+*架构说明就放在代码旁边：界面看 [`gui/README.md`](gui/README.md)，模块看 [`gui/src/README.md`](gui/src/README.md)，生成数据与供应链取证看 [`gui/data/README.md`](gui/data/README.md)。*

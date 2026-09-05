@@ -19,7 +19,7 @@ Say "tomorrow I'll squat 5×5" and it is logged as a plan. Say "did it" and that
 The interface follows the app's language — English, 简体中文, 日本語, Français, Español, and it never mixes two languages in one screen: equipment, muscles, and body parts are all translated, and exercise instructions are shown as numbered steps in your language (Chinese where available, English otherwise). The only untranslated text is the three credit lines in the footer — those are licence requirements.
 
 **Nothing leaves your machine.**
-The catalog, body map, and animations are all bundled. The page makes no network requests at all.
+The catalog, body map, and animations are all bundled. The GUI uses only the host-provided local Base SDK; catalog and media need no external network requests.
 
 ## How to use it
 
@@ -40,10 +40,14 @@ The exercise animations are **© Gym visual — https://gymvisual.com/**, redist
 
 App code is MIT. Every upstream licence text, pinned commit, and content hash ships in `gui/data/`.
 
+## Implementation
+
+React + TypeScript + Tailwind CSS + host shadcn components, compiled with `bottega-react-v1`. The host mounts the default component; consistent Base snapshots and mutation transport stay inside `@bottega/app-react`. Pure domain modules keep the six-column schema and completed-only statistics stable.
+
 ## Requirements
 
 The GUI requests append-only Base row insertion. It can add planned rows only; it cannot edit or delete existing rows, import data, or upload attachments.
 
 ---
 
-*Architecture notes live next to the code: [`gui/README.md`](gui/README.md) for the surface, [`gui/scripts/README.md`](gui/scripts/README.md) for the modules, [`gui/data/README.md`](gui/data/README.md) for the generated data and its provenance.*
+*Architecture notes live next to the code: [`gui/README.md`](gui/README.md) for the surface, [`gui/src/README.md`](gui/src/README.md) for the modules, [`gui/data/README.md`](gui/data/README.md) for the generated data and its provenance.*

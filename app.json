@@ -6,6 +6,14 @@
   "icon": "🏋️",
   "requirements": null,
   "gui": {
-    "capabilities": ["row-insert"]
+    "capabilities": [
+      "row-insert"
+    ],
+    "build": {
+      "preset": "bottega-react-v1",
+      "entry": "src/main.tsx",
+      "stylesheet": "src/styles.css",
+      "iconLibrary": "lucide"
+    }
   }
 }
