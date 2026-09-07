@@ -51,3 +51,8 @@ The GUI requests append-only Base row insertion. It can add planned rows only; i
 ---
 
 *Architecture notes live next to the code: [`gui/README.md`](gui/README.md) for the surface, [`gui/src/README.md`](gui/src/README.md) for the modules, [`gui/data/README.md`](gui/data/README.md) for the generated data and its provenance.*
+
+## Minimum Bottega version
+
+This release requires Bottega **0.1.3** or later, declared in `app.compat.json`.
+Keep this minimum for styling, copy, and business changes that use existing host capabilities. Raise it only when a new host API, package format, or build capability is required, and test against that minimum. Publish the compatible Bottega release before publishing an App that requires it. Editing, rebuilding, and sharing preserve this declaration.

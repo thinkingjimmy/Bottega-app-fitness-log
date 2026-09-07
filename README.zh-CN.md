@@ -47,3 +47,7 @@ GUI 会申请仅追加 Base 行的权限：只能新增 planned 记录，不能�
 ---
 
 *架构说明就放在代码旁边：界面看 [`gui/README.md`](gui/README.md)，模块看 [`gui/src/README.md`](gui/src/README.md)，生成数据与供应链取证看 [`gui/data/README.md`](gui/data/README.md)。*
+
+## 最低 Bottega 版本
+
+此版本要求 **Bottega 0.1.3** 或更高版本，声明见 `app.compat.json`。只调整样式、文案或使用已有宿主能力的业务逻辑时保留最低版本；依赖新的宿主接口、包格式或构建能力时才提高要求，并在最低版本上验证。先发布满足要求的 Bottega，再发布依赖它的 App。编辑、重建和分享均保留声明。
