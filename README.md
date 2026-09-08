@@ -44,6 +44,8 @@ App code is MIT. Every upstream licence text, pinned commit, and content hash sh
 
 React + TypeScript + Tailwind CSS + host shadcn components, compiled with `bottega-react-v1`. The host mounts the default component; consistent Base snapshots and mutation transport stay inside `@bottega/app-react`. Pure domain modules keep the six-column schema and completed-only statistics stable. Failed data reads expose a localized shadcn retry button while retaining the last complete snapshot.
 
+Dropdowns use the App-owned shadcn Select composition: aligned text and icons, 44px triggers, scrollable choices, keyboard navigation, and visible focus.
+
 ## Requirements
 
 The GUI requests append-only Base row insertion. It can add planned rows only; it cannot edit or delete existing rows, import data, or upload attachments.

@@ -1,8 +1,8 @@
 /**
- * [INPUT]: Host theme and semantic Fitness component classes
- * [OUTPUT]: dialogs styling for the training-manual interface
+ * [INPUT]: Host theme, semantic Fitness component classes, and shared shadcn selectors
+ * [OUTPUT]: Dialog styling and plan inputs that preserve the shared Select trigger layout
  * [POS]: Fitness presentation stylesheet composed by src/styles.css
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 /* ═══════════════════ 动作详情：事实表 + 编号步骤 ═══════════════════
    演示图与 © Gym visual 署名同属一个 figure，授权条件不允许拆开渲染。 */
@@ -237,8 +237,7 @@
   display: block;
   min-width: 0;
 }
-.plan-row input,
-.plan-row select {
+.plan-row input {
   min-height: 44px;
   width: 100%;
   border: 1px solid var(--line);
@@ -248,22 +247,6 @@
   padding: 0 10px;
   font: 14px/1 var(--sans);
   appearance: none;
-}
-.plan-row select {
-  padding-right: 26px;
-  cursor: pointer;
-}
-.plan-cell:has(select)::after {
-  content: "";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  width: 6px;
-  height: 6px;
-  pointer-events: none;
-  border-right: 1.5px solid var(--muted);
-  border-bottom: 1.5px solid var(--muted);
-  transform: translateY(-70%) rotate(45deg);
 }
 .plan-cell.num input {
   padding-right: 34px;
@@ -356,7 +339,7 @@
 #plan-form[aria-busy="true"] {
   cursor: progress;
 }
-#plan-form[aria-busy="true"] :is(input, select, button) {
+#plan-form[aria-busy="true"] :is(input, button) {
   pointer-events: none;
   opacity: 0.62;
 }

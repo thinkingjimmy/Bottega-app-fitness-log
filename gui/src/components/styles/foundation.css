@@ -1,8 +1,8 @@
 /**
- * [INPUT]: Host theme and semantic Fitness component classes
- * [OUTPUT]: foundation styling for the training-manual interface
+ * [INPUT]: Host theme, semantic Fitness component classes, and shadcn Select slots
+ * [OUTPUT]: Training-manual foundation and theme tokens for aligned dropdown controls
  * [POS]: Fitness presentation stylesheet composed by src/styles.css
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 :root {
   color-scheme: light dark;
@@ -14,6 +14,12 @@
   --dim: oklch(62% 0.022 66);
   --line: oklch(86% 0.02 78);
   --rule: oklch(32% 0.022 62);
+  --select-background: var(--panel);
+  --select-foreground: var(--ink);
+  --select-border: var(--line);
+  --select-muted: var(--muted);
+  --select-accent: var(--tint);
+  --select-ring: oklch(62% 0.15 250);
   --accent: oklch(56% 0.19 27);
   --accent-tint: oklch(94.5% 0.028 32);
   --ok: oklch(52% 0.12 150);
@@ -140,13 +146,13 @@ h3 {
   gap: 4px;
   min-width: 0;
 }
-.field > span {
+.field > span,
+.field > label {
   font: 600 9.5px/1 var(--sans);
   letter-spacing: 0.14em;
   color: var(--dim);
 }
-.field input,
-.field select {
+.field input {
   min-height: 44px;
   width: 100%;
   border: 0;
@@ -158,25 +164,11 @@ h3 {
   box-shadow: none;
   font: 15px/1 var(--sans);
 }
-.field select {
-  cursor: pointer;
-}
 .field input::placeholder {
   color: var(--dim);
 }
-.field-wrap {
-  position: relative;
-  display: block;
-}
-.field-wrap::after {
-  content: "";
-  position: absolute;
-  right: 5px;
-  bottom: 16px;
-  width: 7px;
-  height: 7px;
-  pointer-events: none;
-  border-right: 1.5px solid var(--muted);
-  border-bottom: 1.5px solid var(--muted);
-  transform: rotate(45deg);
+[data-slot="select-trigger"],
+[data-slot="select-item"] {
+  font: 400 16px/24px var(--sans);
+  letter-spacing: normal;
 }

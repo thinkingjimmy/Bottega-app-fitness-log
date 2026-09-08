@@ -1,8 +1,8 @@
 /**
- * [INPUT]: Offline catalog, localized filters, and shadcn form controls
+ * [INPUT]: Offline catalog, localized filters, and shadcn Input, Button, and Select controls
  * [OUTPUT]: Searchable grouped catalog with stable 24-item pagination
  * [POS]: components layer of the Fitness GUI
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 
 import { useMemo, useState } from "react";
@@ -11,6 +11,7 @@ import { filterExercises, groupByBodyPart } from "../domain/catalog";
 import { exercises, regions } from "../lib/resources";
 import type { LocaleContext } from "../lib/locale";
 import { Button, Input } from "./ui/forms";
+import { SelectControl } from "./ui/select";
 const emptyFilters = (): Filters => ({
   query: "",
   bodyPart: "",
@@ -102,23 +103,19 @@ export function Catalog({
       </label>
       <div className="filters">
         {controls.map((control) => (
-          <label key={control.key} className="field">
-            <span>{control.label}</span>
-            <span className="field-wrap">
-              <select
-                id={control.id}
-                value={filters[control.key]}
-                onChange={(event) => update(control.key, event.target.value)}
-              >
-                <option value="">{t("catalog.all")}</option>
-                {control.options.map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </span>
-          </label>
+          <div key={control.key} className="field">
+            <label htmlFor={control.id}>{control.label}</label>
+            <SelectControl
+              id={control.id}
+              label={control.label}
+              value={filters[control.key]}
+              onValueChange={(value) => update(control.key, value)}
+              options={[
+                { value: "", label: t("catalog.all") },
+                ...control.options.map(([value, label]) => ({ value, label })),
+              ]}
+            />
+          </div>
         ))}
       </div>
       <p className="result-line">

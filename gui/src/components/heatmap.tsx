@@ -1,5 +1,5 @@
 /**
- * [INPUT]: Base snapshot, local body geometry, and completed-set statistics
+ * [INPUT]: Base snapshot, local body geometry, completed-set statistics, and shadcn Select controls
  * [OUTPUT]: Keyboard-accessible muscle heatmap, contribution detail, and shadcn retry control
  * [POS]: components layer of the Fitness GUI
  * [PROTOCOL]: Update this header when making changes, then check README.md.
@@ -11,6 +11,7 @@ import { analyzeRows, intensity, type Analysis } from "../domain/muscle-stats";
 import { bodyMap, byId, exercises } from "../lib/resources";
 import type { LocaleContext } from "../lib/locale";
 import { Button } from "./ui/forms";
+import { SelectControl } from "./ui/select";
 export function Heatmap({
   snapshot,
   status,
@@ -40,38 +41,32 @@ export function Heatmap({
           <h2 id="heat-title">{t("map.title")}</h2>
         </div>
         <div className="map-controls">
-          <label className="field">
-            <span>{t("map.body")}</span>
-            <span className="field-wrap">
-              <select
-                id="gender"
-                value={gender}
-                onChange={(event) => setGender(event.target.value as Gender)}
-              >
-                {(["male", "female"] as const).map((value) => (
-                  <option key={value} value={value}>
-                    {t(`map.body.${value}`)}
-                  </option>
-                ))}
-              </select>
-            </span>
-          </label>
-          <label className="field">
-            <span>{t("map.range")}</span>
-            <span className="field-wrap">
-              <select
-                id="range"
-                value={range}
-                onChange={(event) => setRange(event.target.value as Range)}
-              >
-                {["7", "30", "90", "all"].map((value) => (
-                  <option key={value} value={value}>
-                    {t(`map.range.${value}`)}
-                  </option>
-                ))}
-              </select>
-            </span>
-          </label>
+          <div className="field">
+            <label htmlFor="gender">{t("map.body")}</label>
+            <SelectControl
+              id="gender"
+              label={t("map.body")}
+              value={gender}
+              onValueChange={(value) => setGender(value as Gender)}
+              options={["male", "female"].map((value) => ({
+                value,
+                label: t(`map.body.${value}`),
+              }))}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="range">{t("map.range")}</label>
+            <SelectControl
+              id="range"
+              label={t("map.range")}
+              value={range}
+              onValueChange={(value) => setRange(value as Range)}
+              options={["7", "30", "90", "all"].map((value) => ({
+                value,
+                label: t(`map.range.${value}`),
+              }))}
+            />
+          </div>
         </div>
       </div>
       <div
@@ -80,7 +75,11 @@ export function Heatmap({
         role="status"
       >
         {status}
-        {error && <Button className="ghost ml-3" onClick={onRetry}>{t("error.retry")}</Button>}
+        {error && (
+          <Button className="ghost ml-3" onClick={onRetry}>
+            {t("error.retry")}
+          </Button>
+        )}
       </div>
       <figure className="plate">
         <div className="plate-inner">

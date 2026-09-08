@@ -1,8 +1,8 @@
 /**
- * [INPUT]: Controlled plan hook and origin-attested shadcn Dialog/form primitives
+ * [INPUT]: Controlled plan hook and origin-attested shadcn Dialog/form controls with focusable field slots
  * [OUTPUT]: Plan dialog with locked recovery, stable feedback, validation focus, and focus restoration
  * [POS]: Fitness GUI components layer
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 
 import { useEffect, useRef, type RefObject } from "react";
@@ -52,9 +52,12 @@ export function PlanDialog({
   useEffect(() => {
     const field = (plan.error as { field?: string } | null)?.field;
     if (!field) return;
-    const control = form.current?.elements.namedItem(
-      field === "exercise_id" ? "items.0.exerciseId" : field,
-    );
+    const name = field === "exercise_id" ? "items.0.exerciseId" : field;
+    const control =
+      Array.from(
+        form.current?.querySelectorAll<HTMLElement>("[data-field]") ?? [],
+      ).find((element) => element.dataset.field === name) ??
+      form.current?.elements.namedItem(name);
     if (control instanceof HTMLElement) control.focus();
   }, [plan.error]);
   return (

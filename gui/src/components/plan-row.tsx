@@ -1,14 +1,15 @@
 /**
- * [INPUT]: Controlled plan item and offline exercise choices
+ * [INPUT]: Controlled plan item, offline exercise choices, and shadcn Select control
  * [OUTPUT]: Search, exercise, sets, weight, and remove controls for one stable draft row
  * [POS]: Fitness GUI components layer
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 
 import type { DraftItem } from "../hooks/use-plan";
 import type { LocaleContext } from "../lib/locale";
 import { exercises } from "../lib/resources";
 import { Input, Button } from "./ui/forms";
+import { SelectControl } from "./ui/select";
 export function PlanRow({
   item,
   index,
@@ -52,22 +53,20 @@ export function PlanRow({
         />
       </span>
       <span className="plan-cell plan-exercise-cell">
-        <select
+        <SelectControl
           className="plan-exercise-select"
           name={`items.${index}.exerciseId`}
           required
-          aria-label={t("plan.exercise")}
-          value={item.exerciseId}
+          label={t("plan.exercise")}
+          value={item.exerciseId || null}
           disabled={locked}
-          onChange={(event) => onChange({ exerciseId: event.target.value })}
-        >
-          <option value="">{t("plan.choose")}</option>
-          {available.map((exercise) => (
-            <option key={exercise.id} value={exercise.id}>
-              {copy.name(exercise)}
-            </option>
-          ))}
-        </select>
+          placeholder={t("plan.choose")}
+          onValueChange={(exerciseId) => onChange({ exerciseId })}
+          options={available.map((exercise) => ({
+            value: exercise.id,
+            label: copy.name(exercise),
+          }))}
+        />
       </span>
       <span className="plan-cell num plan-sets-cell">
         <Input
