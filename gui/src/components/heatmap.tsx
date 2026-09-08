@@ -1,8 +1,8 @@
 /**
  * [INPUT]: Base snapshot, local body geometry, and completed-set statistics
- * [OUTPUT]: Keyboard-accessible male/female muscle heatmap and contribution detail
+ * [OUTPUT]: Keyboard-accessible muscle heatmap, contribution detail, and shadcn retry control
  * [POS]: components layer of the Fitness GUI
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 
 import { useMemo, useState } from "react";
@@ -10,15 +10,18 @@ import type { BaseSnapshot, Gender, Range } from "../domain/types";
 import { analyzeRows, intensity, type Analysis } from "../domain/muscle-stats";
 import { bodyMap, byId, exercises } from "../lib/resources";
 import type { LocaleContext } from "../lib/locale";
+import { Button } from "./ui/forms";
 export function Heatmap({
   snapshot,
   status,
   error,
+  onRetry,
   copy,
 }: {
   snapshot: BaseSnapshot | null;
   status: string;
   error: boolean;
+  onRetry(): void;
   copy: LocaleContext;
 }) {
   const [gender, setGender] = useState<Gender>("male"),
@@ -77,6 +80,7 @@ export function Heatmap({
         role="status"
       >
         {status}
+        {error && <Button className="ghost ml-3" onClick={onRetry}>{t("error.retry")}</Button>}
       </div>
       <figure className="plate">
         <div className="plate-inner">

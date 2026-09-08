@@ -2,7 +2,7 @@
  * [INPUT]: Locale tags and interpolation values
  * [OUTPUT]: Five-language copy and locale negotiation
  * [POS]: UI copy authority
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 
 import type { Locale, Translator } from "../domain/types";
@@ -97,6 +97,7 @@ const STRINGS: Record<Locale, Record<string, string>> = {
     "error.404": "该 App 尚无数据。",
     "error.410": "App 已切换版本，请刷新应用。",
     "error.5xx": "数据服务暂时不可用。",
+    "error.retry": "重新读取",
     "error.generic": "读取失败。",
     "error.resource": "本地资源加载失败：{path}",
     "error.stale": " 正在保留上次成功的数据。",
@@ -230,6 +231,7 @@ const STRINGS: Record<Locale, Record<string, string>> = {
     "error.404": "This App has no data yet.",
     "error.410": "The App switched versions — reload the app.",
     "error.5xx": "The data service is temporarily unavailable.",
+    "error.retry": "Try again",
     "error.generic": "Could not read the data.",
     "error.resource": "Failed to load local resource: {path}",
     "error.stale": " Showing the last successful read.",
@@ -360,6 +362,7 @@ const STRINGS: Record<Locale, Record<string, string>> = {
     "error.404": "この App にはまだデータがありません。",
     "error.410": "App のバージョンが切り替わりました。再読み込みしてください。",
     "error.5xx": "データサービスが一時的に利用できません。",
+    "error.retry": "再読み込み",
     "error.generic": "読み込みに失敗しました。",
     "error.resource": "ローカルリソースの読み込みに失敗しました：{path}",
     "error.stale": " 前回成功した内容を表示しています。",
@@ -495,6 +498,7 @@ const STRINGS: Record<Locale, Record<string, string>> = {
     "error.404": "Cette App n'a pas encore de données.",
     "error.410": "L'App a changé de version — rechargez l'application.",
     "error.5xx": "Le service de données est momentanément indisponible.",
+    "error.retry": "Réessayer",
     "error.generic": "Lecture impossible.",
     "error.resource": "Échec du chargement de la ressource locale : {path}",
     "error.stale": " Affichage de la dernière lecture réussie.",
@@ -628,6 +632,7 @@ const STRINGS: Record<Locale, Record<string, string>> = {
     "error.404": "Esta App todavía no tiene datos.",
     "error.410": "La App cambió de versión: recarga la aplicación.",
     "error.5xx": "El servicio de datos no está disponible temporalmente.",
+    "error.retry": "Reintentar",
     "error.generic": "No se pudo leer.",
     "error.resource": "No se pudo cargar el recurso local: {path}",
     "error.stale": " Mostrando la última lectura correcta.",

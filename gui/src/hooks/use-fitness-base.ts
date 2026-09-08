@@ -1,8 +1,8 @@
 /**
  * [INPUT]: React SDK snapshots and Fitness schema validation
- * [OUTPUT]: Live Base state with stale-data preservation and visible plan availability
+ * [OUTPUT]: Live Base state with stale-data preservation, explicit retry, and visible plan availability
  * [POS]: hooks layer of the Fitness GUI
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 
 import { useState } from "react";
@@ -44,6 +44,7 @@ export function useFitnessBase(t: Translator) {
   return {
     snapshot,
     refresh: resource.refresh,
+    retry: resource.retry,
     status,
     error: Boolean(error || issues.length),
     disabledReason,

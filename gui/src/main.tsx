@@ -1,8 +1,8 @@
 /**
  * [INPUT]: React, typed Fitness domain/hooks/components, and the host SDK provider
- * [OUTPUT]: Default zero-argument Fitness Log component owned by the trusted bootstrap
+ * [OUTPUT]: Default Fitness Log component with explicit data recovery owned by the trusted bootstrap
  * [POS]: Fitness GUI main.tsx layer
- * [PROTOCOL]: Update this header when the file changes, then check README.md
+ * [PROTOCOL]: Update this header when making changes, then check README.md.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -74,6 +74,7 @@ export default function FitnessLog() {
           snapshot={base.snapshot}
           status={base.status}
           error={base.error}
+          onRetry={base.retry}
           copy={copy}
         />
         <Catalog
